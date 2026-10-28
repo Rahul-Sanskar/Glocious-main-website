@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import {
   Building2, HeartPulse, GraduationCap, ShoppingBag,
   Landmark, Store, Plane, Car, Cpu,
@@ -67,7 +68,7 @@ export default function Industries() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16 text-center max-w-2xl mx-auto"
+          className="mb-12 text-center max-w-2xl mx-auto"
         >
           <p className="eyebrow mb-4">
             Industries
@@ -80,6 +81,24 @@ export default function Industries() {
             </span>
           </h2>
         </motion.div>
+
+        {/* Sector banner — a single wide crop, deliberately not a card grid of
+            photos, so the industry cards below stay the focal point. */}
+        <motion.figure
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.65 }}
+          className="relative mb-16 overflow-hidden rounded-xl border border-border bg-surface shadow-card h-[180px] sm:h-[240px] lg:h-[300px]"
+        >
+          <Image
+            src="/images/industries.jpg"
+            alt="Abstract visual representing the industries Glocious serves"
+            fill
+            sizes="(min-width: 1280px) 1280px, 100vw"
+            className="object-cover"
+          />
+        </motion.figure>
 
         {/* Industry cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

@@ -71,6 +71,36 @@ export interface Solution {
   integration?: SolutionIntegration;
 }
 
+/**
+ * Category-level hero visual for solution pages.
+ *
+ * One visual per *category* rather than per solution: the eleven pages share
+ * four categories, so this gives every page a relevant opening image without
+ * duplicating the same asset eleven times. Kept as plain string data so the
+ * route can stay a Server Component.
+ */
+export const SOLUTION_CATEGORY_IMAGES: Record<
+  SolutionCategory,
+  { src: string; alt: string }
+> = {
+  Communication: {
+    src: "/images/solution-communication.jpg",
+    alt: "Abstract illustration of multi-channel business messaging and voice infrastructure",
+  },
+  "Digital Growth": {
+    src: "/images/solution-digital-growth.jpg",
+    alt: "Abstract illustration of digital marketing analytics and campaign performance",
+  },
+  Technology: {
+    src: "/images/solution-technology.jpg",
+    alt: "Abstract illustration of modern web application and cloud infrastructure",
+  },
+  "AI & Automation": {
+    src: "/images/solution-ai-automation.jpg",
+    alt: "Abstract illustration of AI-assisted communication automation workflows",
+  },
+};
+
 export const SOLUTION_INDUSTRIES: Record<IndustryKey, NamedItem> = {
   "real-estate": {
     title: "Real Estate",

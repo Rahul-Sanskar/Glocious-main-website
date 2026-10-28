@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import MagneticButton from "../MagneticButton";
-import type { Solution } from "@/data/solutions";
+import { SOLUTION_CATEGORY_IMAGES, type Solution } from "@/data/solutions";
 
 /**
  * SolutionHero — the single entry point for every /solutions/[slug] page.
@@ -14,6 +15,8 @@ import type { Solution } from "@/data/solutions";
  * the content changes.
  */
 export default function SolutionHero({ solution }: { solution: Solution }) {
+  const categoryImage = SOLUTION_CATEGORY_IMAGES[solution.category];
+
   return (
     <section className="relative overflow-hidden pt-[124px] pb-16 md:pt-[156px] md:pb-24">
       {/* Ambient brand wash + architectural grid, matching the homepage hero */}
@@ -106,31 +109,49 @@ export default function SolutionHero({ solution }: { solution: Solution }) {
             </motion.div>
           </div>
 
-          {/* ── Right: at a glance ────────────────────────── */}
-          <motion.aside
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-            className="card card-elevated p-6 md:p-8 lg:mt-2"
-          >
-            <p className="text-2xs font-semibold uppercase tracking-widest text-content-secondary mb-6">
-              At a glance
-            </p>
-            <ul className="space-y-4">
-              {solution.highlights.map((highlight) => (
-                <li key={highlight} className="flex items-start gap-3">
-                  <CheckCircle2
-                    size={16}
-                    className="text-accent shrink-0 mt-[3px]"
-                    aria-hidden
-                  />
-                  <span className="text-sm text-content-primary leading-snug">
-                    {highlight}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </motion.aside>
+          {/* ── Right: category visual + at a glance ──────── */}
+          <div className="flex flex-col gap-6 lg:mt-2">
+            <motion.figure
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.26, ease: "easeOut" }}
+              className="relative overflow-hidden rounded-xl border border-border bg-surface shadow-card"
+            >
+              <Image
+                src={categoryImage.src}
+                alt={categoryImage.alt}
+                width={1376}
+                height={768}
+                sizes="(min-width: 1024px) 460px, 100vw"
+                className="h-auto w-full object-cover"
+              />
+            </motion.figure>
+
+            <motion.aside
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+              className="card card-elevated p-6 md:p-8"
+            >
+              <p className="text-2xs font-semibold uppercase tracking-widest text-content-secondary mb-6">
+                At a glance
+              </p>
+              <ul className="space-y-4">
+                {solution.highlights.map((highlight) => (
+                  <li key={highlight} className="flex items-start gap-3">
+                    <CheckCircle2
+                      size={16}
+                      className="text-accent shrink-0 mt-[3px]"
+                      aria-hidden
+                    />
+                    <span className="text-sm text-content-primary leading-snug">
+                      {highlight}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </motion.aside>
+          </div>
         </div>
       </div>
     </section>

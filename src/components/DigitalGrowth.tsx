@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import {
   Search, Share2, Megaphone, MousePointerClick,
   FileText, Users, BarChart2, ArrowRight,
@@ -102,6 +103,19 @@ export default function DigitalGrowth() {
               >
                 Talk to our growth team <ArrowRight size={14} />
               </Link>
+
+              {/* Visual anchor for the sticky column — the growing list on the
+                  right has no imagery, so the section keeps one here. */}
+              <div className="relative mt-10 hidden overflow-hidden rounded-xl border border-border bg-surface shadow-card lg:block">
+                <Image
+                  src="/images/digital-growth.jpg"
+                  alt="Abstract visual representing digital growth and campaign performance"
+                  width={1376}
+                  height={768}
+                  sizes="(min-width: 1024px) 460px, 100vw"
+                  className="h-auto w-full object-cover"
+                />
+              </div>
             </motion.div>
           </div>
 
