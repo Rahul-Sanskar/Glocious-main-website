@@ -1,68 +1,73 @@
 import type { Metadata } from "next";
-import { Sora, Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google"; // Vercel rebuild v4 - force deploy
+import { Sora, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import dynamic from "next/dynamic";
-import Script from "next/script";
+import LayoutShell from "@/components/LayoutShell";
 
-const CustomCursor = dynamic(() => import("@/components/CustomCursor"), { ssr: false });
-const AIChatbot = dynamic(() => import("@/components/AIChatbot"), { ssr: false });
-const Preloader = dynamic(() => import("@/components/Preloader"), { ssr: false });
-const InteractiveBackground = dynamic(() => import("@/components/InteractiveBackground"), { ssr: false });
-const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"), { ssr: false });
-
-const sora = Sora({ 
-  subsets: ["latin"], 
-  variable: '--font-sora',
-  display: 'swap',
+/* Display face (headings) + text face (body) + mono (code / technical labels).
+   Three families is the ceiling — each one is a real download cost. */
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+  weight: ["500", "600", "700"],
 });
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
-  variable: '--font-inter',
-  display: 'swap',
+  variable: "--font-inter",
+  display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({ 
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: '--font-plus-jakarta-sans',
-  display: 'swap',
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.parvinfosoft.com"),
-  title: "ParvInfoSoft | High-Performance B2B AI Automation & Voice AI Agency",
-  description: "ParvInfoSoft is a premier B2B AI Agency based in Surat, Gujarat & serving global clients. We engineer autonomous AI voice receptionists, sub-800ms lead qualification agents, custom CRM integrations, and enterprise automation infrastructure for real estate, healthcare, and high-volume businesses.",
+  metadataBase: new URL("https://www.glocious.com"),
+  title: "Glocious Infotech | Business Communication, Digital Growth & Technology Solutions",
+  description:
+    "Glocious Infotech helps businesses communicate with customers, automate engagement, and accelerate growth through intelligent communication infrastructure, digital marketing, and technology solutions.",
   keywords: [
-    "AI automation agency","AI voice agents development","Retell AI voice receptionist",
-    "Real estate AI automation","Sub-800ms voice AI latency","AI lead qualification system",
-    "Headless n8n workflow automation","Custom CRM development","AI chatbot for business",
-    "Custom AI solutions Surat","AI development company Surat","Website development company Surat",
-    "App development agency Surat","B2B AI agency India","Enterprise AI solutions India",
-    "WhatsApp API automation","Custom LLM integration","Automated sales pipelines"
+    "bulk SMS India",
+    "business communication platform",
+    "WhatsApp Business API",
+    "RCS messaging",
+    "IVR solutions",
+    "cloud telephony",
+    "OTP SMS",
+    "transactional SMS",
+    "digital marketing agency",
+    "SEO services India",
+    "lead generation",
+    "marketing automation",
+    "website development India",
+    "AI communication platform",
+    "unified messaging platform",
+    "Glocious Infotech",
   ],
   alternates: {
-    canonical: "https://www.parvinfosoft.com",
+    canonical: "https://www.glocious.com",
   },
   icons: {
-    icon: '/parv-logo-icon.png',
+    icon: "/glocious-icon.svg",
+    shortcut: "/glocious-icon.svg",
+    apple: "/glocious-icon.svg",
   },
   openGraph: {
-    title: "ParvInfoSoft | High-Performance B2B AI Automation & Voice AI Agency",
-    description: "ParvInfoSoft is a premier B2B AI Agency based in Surat, Gujarat & serving global clients. We engineer autonomous AI voice receptionists, sub-800ms lead qualification agents, custom CRM integrations, and enterprise automation infrastructure for real estate, healthcare, and high-volume businesses.",
-    url: "https://www.parvinfosoft.com",
-    siteName: "ParvInfoSoft",
+    title: "Glocious Infotech | Business Communication & Digital Growth",
+    description:
+      "Powering business communication and digital growth. SMS, RCS, WhatsApp, Voice, IVR, Email, SEO, and AI-powered automation, all from one technology partner.",
+    url: "https://www.glocious.com",
+    siteName: "Glocious Infotech",
     images: [
       {
-        url: "/logo.png",
+        url: "/images/hero-communication-network.jpg",
         width: 1200,
         height: 630,
-        alt: "ParvInfoSoft - B2B AI Systems & Automation Agency",
+        alt: "Glocious Infotech — Business Communication & Digital Growth",
       },
     ],
     locale: "en_IN",
@@ -70,9 +75,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ParvInfoSoft | High-Performance B2B AI Agency",
-    description: "Engineering autonomous AI voice agents, sub-800ms lead qualification, and enterprise automation infrastructure.",
-    images: ["/logo.png"],
+    title: "Glocious Infotech | Business Communication & Digital Growth",
+    description:
+      "SMS, RCS, WhatsApp, Voice, IVR, Email, AI chatbots, SEO and digital marketing, all from one partner.",
+    images: ["/images/hero-communication-network.jpg"],
   },
   robots: {
     index: true,
@@ -80,9 +86,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
 };
@@ -92,143 +98,116 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // JSON-LD Schema for LocalBusiness & ProfessionalService
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": ["LocalBusiness", "ProfessionalService"],
-        "@id": "https://www.parvinfosoft.com/#organization",
-        "name": "ParvInfoSoft",
-        "url": "https://www.parvinfosoft.com/",
-        "image": "https://www.parvinfosoft.com/logo.png",
-        "priceRange": "$$",
-        "description": "High-Performance B2B AI Agency and Systems Engineering firm serving Surat, Gujarat, India and enterprise clients worldwide.",
-        "telephone": "+91-9081553331",
-        "email": "parvinfosoftadmin@gmail.com",
-        "founder": {
-          "@type": "Person",
-          "name": "Kaushal Tiwari",
-          "jobTitle": "Founder and CEO",
-          "url": "https://www.parvinfosoft.com/"
-        },
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "4019 The Palladium Mall, Near Vijaynagar, Chikuwadi, Nana Varachha",
-          "addressLocality": "Surat",
-          "addressRegion": "Gujarat",
-          "postalCode": "395010",
-          "addressCountry": "IN"
-        },
-        "areaServed": {
+        "@type": ["Organization", "ProfessionalService"],
+        "@id": "https://www.glocious.com/#organization",
+        name: "Glocious Infotech Pvt. Ltd.",
+        url: "https://www.glocious.com/",
+        description:
+          "Glocious Infotech is a technology and business solutions company specialising in business communication infrastructure, digital growth services, and AI-powered automation.",
+        areaServed: {
           "@type": "Country",
-          "name": "India"
+          name: "India",
         },
-        "hasOfferCatalog": {
+        hasOfferCatalog: {
           "@type": "OfferCatalog",
-          "name": "ParvInfoSoft B2B AI & IT Services",
-          "itemListElement": [
+          name: "Glocious Business Communication & Digital Solutions",
+          itemListElement: [
             {
               "@type": "OfferCatalog",
-              "name": "AI & Business Automation Systems",
-              "itemListElement": [
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Autonomous AI Voice Receptionists & Sales Agents"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Real Estate Lead Qualification Systems"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Custom CRM & ERP Automation"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Custom Web & Mobile App Development"
-                  }
-                }
-              ]
-            }
-          ]
+              name: "Business Communication",
+              itemListElement: [
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "Bulk SMS & Transactional SMS" } },
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "WhatsApp Business Communication" } },
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "RCS Messaging" } },
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "IVR & Cloud Telephony" } },
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "Email Communication" } },
+              ],
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "Digital Growth",
+              itemListElement: [
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO & Digital Marketing" } },
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "Lead Generation & Management" } },
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "Marketing Automation" } },
+              ],
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "Technology Solutions",
+              itemListElement: [
+                { "@type": "Offer", itemOffered: { "@type": "Service", name: "Website & E-commerce Development" } },
+              ],
+            },
+          ],
         },
-        "sameAs": [
-          "https://www.instagram.com/parvinfosoftai?igsh=MWVkdzFqb25hMXh2ZQ==",
-          "https://www.linkedin.com/company/parvinfosoft/"
-        ]
       },
       {
         "@type": "FAQPage",
-        "mainEntity": [
+        mainEntity: [
           {
             "@type": "Question",
-            "name": "Where is ParvInfoSoft located?",
-            "acceptedAnswer": {
+            name: "What is Glocious Infotech?",
+            acceptedAnswer: {
               "@type": "Answer",
-              "text": "We are located at 4019 The Palladium Mall, near Vijaynagar, Chikuwadi, Nana Varachha, Surat, Gujarat 395010, India. We serve clients globally."
-            }
+              text: "Glocious Infotech is a technology and business solutions company that provides business communication infrastructure (SMS, RCS, WhatsApp, Voice, IVR, Email), digital growth services (SEO, SMM, PPC, Lead Generation), and technology solutions including website, e-commerce and custom digital development.",
+            },
           },
           {
             "@type": "Question",
-            "name": "What services does ParvInfoSoft provide?",
-            "acceptedAnswer": {
+            name: "What communication channels does Glocious support?",
+            acceptedAnswer: {
               "@type": "Answer",
-              "text": "We are a high-performance B2B AI Agency specializing in autonomous AI voice receptionists, sub-800ms lead qualification engines, custom CRM/ERP integration, and enterprise web/mobile development."
-            }
+              text: "Glocious supports a full range of business communication channels including Bulk SMS, OTP & Authentication SMS, Transactional SMS, RCS Messaging, WhatsApp Business API, Voice SMS, IVR, Cloud Telephony, Missed Call Services, Click-to-Call, Call Routing, OTP Email, Transactional Email, and Promotional Email.",
+            },
           },
-          {
-            "@type": "Question",
-            "name": "Who is the founder of ParvInfoSoft?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "ParvInfoSoft was founded by Kaushal Tiwari, an AI systems architect and entrepreneur dedicated to building enterprise AI automation systems in Surat and globally."
-            }
-          }
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   };
 
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} ${plusJakartaSans.variable} font-general antialiased bg-transparent text-white selection:bg-accent-electric selection:text-white`}>
-        {/* Google tag (gtag.js) */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-KC8RZHDCFV"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-KC8RZHDCFV');
-          `}
-        </Script>
-        <div className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-accent-electric/30 via-accent-electric to-accent-electric/30 origin-left scale-x-0 z-[99999] transition-transform duration-75 scroll-progress-bar" />
-        <InteractiveBackground />
-        <Preloader />
-        <CustomCursor />
-        <SmoothScroll />
-        <div className="fixed inset-0 z-[9999] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] mix-blend-overlay pointer-events-none" />
+    <html
+      lang="en"
+      suppressHydrationWarning
+    >
+      <head>
+        {/*
+          Theme initialization — runs before first paint so the correct theme
+          is applied with zero flash. Intentional constraints:
+            · synchronous but tiny (no rendering dependency, no network)
+            · explicit stored preference wins
+            · otherwise the OS preference is honoured
+            · wrapped in try/catch so private-mode storage errors can't break the page
+        */}
         <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem("theme");var t=s==="light"||s==="dark"?s:(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");var e=document.documentElement;e.setAttribute("data-theme",t);e.style.colorScheme=t;}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();`,
+          }}
         />
-        {children}
-        <AIChatbot />
+      </head>
+      <body
+        className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
+        <LayoutShell>
+          <div
+            className="scroll-progress-bar fixed top-0 left-0 right-0 h-[2px] origin-left scale-x-0 z-[99999] transition-transform duration-75"
+            style={{
+              background:
+                "linear-gradient(to right, transparent, var(--color-accent) 45%, var(--color-accent) 55%, transparent)",
+            }}
+          />
+          <div className="grain-overlay fixed inset-0 z-[9999] pointer-events-none" />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
+          {children}
+        </LayoutShell>
       </body>
     </html>
   );

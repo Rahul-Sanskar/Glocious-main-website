@@ -1,23 +1,14 @@
 import { MetadataRoute } from 'next';
-import { servicesData, solutionsData, resourcesData } from '@/data/pages';
-import { caseStudiesData } from '@/data/case-studies';
+import { solutions } from '@/data/solutions';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.parvinfosoft.com';
-  
-  // Create mapping of slug to category
-  const allPages: Record<string, string> = {
-    ...Object.keys(servicesData).reduce((acc, key) => ({ ...acc, [key]: 'services' }), {}),
-    ...Object.keys(solutionsData).reduce((acc, key) => ({ ...acc, [key]: 'solutions' }), {}),
-    ...Object.keys(resourcesData).reduce((acc, key) => ({ ...acc, [key]: 'resources' }), {}),
-    ...Object.keys(caseStudiesData).reduce((acc, key) => ({ ...acc, [key]: 'resources/case-studies' }), {}),
-  };
+  const baseUrl = 'https://www.glocious.com';
 
-  const dynamicRoutes = Object.keys(allPages).map((slug) => ({
-    url: `${baseUrl}/${allPages[slug]}/${slug}`,
+  const solutionRoutes: MetadataRoute.Sitemap = solutions.map((solution) => ({
+    url: `${baseUrl}/solutions/${solution.slug}`,
     lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
+    changeFrequency: 'monthly',
+    priority: 0.7,
   }));
 
   return [
@@ -28,11 +19,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${baseUrl}/get-started`,
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.9,
+      priority: 0.8,
     },
-    ...dynamicRoutes,
+    ...solutionRoutes,
   ];
 }

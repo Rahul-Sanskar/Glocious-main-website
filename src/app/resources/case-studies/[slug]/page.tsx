@@ -9,7 +9,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   const data = caseStudiesData[params.slug];
   if (!data) return {};
   return {
-    title: `${data.title} | ParvInfoSoft Case Studies`,
+    title: `${data.title} | Glocious Infotech Case Studies`,
     description: data.subtitle,
   };
 }

@@ -1,6 +1,6 @@
-# ParvInfoSoft: Premium Next.js & GSAP Creative Tech Ecosystem
+# Glocious Infotech: Premium Next.js & GSAP Creative Tech Ecosystem
 
-[ParvInfoSoft](https://www.parvinfosoft.com) is a modern Next.js 14 web application designed as a luxury cinematic agency portfolio and IT consultancy. Combining elite-level motion design with robust, scalable software architecture, this project delivers an immersive Awwwards-grade experience featuring high-performance animations, fluid typography, and intelligent interactive systems.
+[Glocious Infotech](https://www.glocious.com) is a modern Next.js 14 web application for a B2B business communication, digital growth and technology solutions company. Combining elite-level motion design with robust, scalable software architecture, this project delivers an immersive, high-performance experience featuring fluid typography and intelligent interactive systems.
 
 
 ---
@@ -102,4 +102,4 @@ npm run start
 
 ## 🛡️ License
 
-This project is proprietary. All rights reserved. Created by ParvInfoSoft.
+This project is proprietary. All rights reserved. Created by Glocious Infotech.

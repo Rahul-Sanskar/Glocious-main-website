@@ -9,7 +9,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   const data = resourcesData[params.slug];
   if (!data) return {};
   return {
-    title: `${data.title} | ParvInfoSoft Resources`,
+    title: `${data.title} | Glocious Infotech Resources`,
     description: data.description,
   };
 }

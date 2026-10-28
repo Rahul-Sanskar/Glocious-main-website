@@ -5,158 +5,92 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+/**
+ * SmoothScroll — single owner of scroll behaviour.
+ *
+ * Why this owns anchor handling: the CSS `scroll-behavior: smooth` rule has
+ * been removed, because two smooth-scroll systems fighting over the same
+ * property is what produces the "jump then glide" artefact. Lenis is now the
+ * only thing that moves the page, so in-page anchors are routed through it.
+ */
 export default function SmoothScroll() {
   useEffect(() => {
-    // Register GSAP ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
-    // Initialize Lenis
+    /* Honour the OS setting. Lenis still drives scrollTo and owns the ticker,
+       but with smoothWheel off the page stops drifting after the gesture and
+       anchors jump instead of gliding. */
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
     const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // ultra-smooth exponential easing
+      duration: 1.05,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
       orientation: "vertical",
       gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.2,
+      smoothWheel: !prefersReducedMotion,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.4,
     });
 
-    // Connect Lenis to ScrollTrigger and update Scroll Progress Bar
-    const progressBar = document.querySelector(".scroll-progress-bar");
-    lenis.on("scroll", (e) => {
+    /* Progress bar — read from Lenis' own scroll event so it stays in sync
+       with the smoothed position rather than the raw one. */
+    const progressBar = document.querySelector<HTMLElement>(".scroll-progress-bar");
+    const onScroll = () => {
       ScrollTrigger.update();
-      if (progressBar) {
-        const scrollPercent = e.scroll / (e.limit || 1);
-        gsap.set(progressBar, { scaleX: scrollPercent });
-      }
-    });
+      if (!progressBar) return;
+      const limit = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = limit > 0 ? Math.min(1, Math.max(0, lenis.scroll / limit)) : 0;
+      gsap.set(progressBar, { scaleX: progress });
+    };
+    lenis.on("scroll", onScroll);
 
-    const updateTicker = (time: number) => {
-      lenis.raf(time * 1000);
+    const updateTicker = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(updateTicker);
+
+    /* Route same-page anchors through Lenis (the nav links to "/#section", so
+       both the bare "#id" and "/#id" forms have to be recognised). Cross-page
+       hashes are left to the router. */
+    const onDocumentClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const anchor = (event.target as HTMLElement | null)?.closest?.("a");
+      const href = anchor?.getAttribute("href");
+      if (!href) return;
+
+      const hashIndex = href.indexOf("#");
+      if (hashIndex === -1) return;
+
+      const path = href.slice(0, hashIndex);
+      if (path !== "" && path !== window.location.pathname) return;
+
+      const target = document.getElementById(decodeURIComponent(href.slice(hashIndex + 1)));
+      if (!target) return;
+
+      event.preventDefault();
+      lenis.scrollTo(target, { offset: -72, immediate: prefersReducedMotion });
     };
 
-    gsap.ticker.add(updateTicker);
-    gsap.ticker.lagSmoothing(0);
-
-    // Dynamic Scroll Skew effect for elements with class 'scroll-skew'
-    const skewElements = document.querySelectorAll(".scroll-skew");
-    let skewTrigger: ScrollTrigger | null = null;
-    
-    if (skewElements.length > 0) {
-      const proxy = { skew: 0 };
-      const skewSetters = Array.from(skewElements).map(el => gsap.quickSetter(el, "skewY", "deg"));
-      const clamp = gsap.utils.clamp(-6, 6); // clamp between -6 and +6 degrees
-
-      skewTrigger = ScrollTrigger.create({
-        onUpdate: (self) => {
-          const skew = clamp(self.getVelocity() / -400);
-          if (Math.abs(skew) > Math.abs(proxy.skew)) {
-            proxy.skew = skew;
-            gsap.to(proxy, {
-              skew: 0,
-              duration: 0.6,
-              ease: "power2.out",
-              overwrite: "auto",
-              onUpdate: () => {
-                skewSetters.forEach(setter => setter(proxy.skew));
-              }
-            });
-          }
-        }
-      });
-    }
-
-    // Scroll reveal text masking
-    const revealTexts = document.querySelectorAll(".scroll-reveal-text");
-    const revealTriggers: ScrollTrigger[] = [];
-
-    revealTexts.forEach(el => {
-      const text = el.textContent || "";
-      const words = text.split(" ");
-      
-      el.innerHTML = "";
-      words.forEach((word) => {
-        const wrapper = document.createElement("span");
-        wrapper.className = "inline-block overflow-hidden mr-[0.22em] pb-[0.05em] align-bottom";
-        
-        const inner = document.createElement("span");
-        inner.className = "inline-block translate-y-[110%] will-change-transform";
-        inner.textContent = word;
-        
-        wrapper.appendChild(inner);
-        el.appendChild(wrapper);
-      });
-
-      const innerSpans = el.querySelectorAll("span > span");
-      
-      const trigger = ScrollTrigger.create({
-        trigger: el,
-        start: "top 88%",
-        toggleActions: "play none none none",
-        onEnter: () => {
-          gsap.to(innerSpans, {
-            y: "0%",
-            duration: 0.8,
-            stagger: 0.02,
-            ease: "power3.out",
-            overwrite: "auto"
-          });
-        }
-      });
-      revealTriggers.push(trigger);
-    });
-
-    // Image reveal animation using clip-path and scale
-    const revealImages = document.querySelectorAll(".img-reveal");
-    revealImages.forEach(el => {
-      // Set initial styles
-      gsap.set(el, { 
-        clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)",
-        scale: 1.15
-      });
-      
-      const trigger = ScrollTrigger.create({
-        trigger: el,
-        start: "top 85%",
-        toggleActions: "play none none none",
-        onEnter: () => {
-          gsap.to(el, {
-            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-            scale: 1,
-            duration: 1.2,
-            ease: "power4.inOut",
-            overwrite: "auto"
-          });
-        }
-      });
-      revealTriggers.push(trigger);
-    });
-
-    // Parallax scrolling elements
-    const parallaxElements = document.querySelectorAll(".scroll-parallax");
-    parallaxElements.forEach(el => {
-      const speed = parseFloat(el.getAttribute("data-parallax-speed") || "10"); // percent offset
-      const trigger = ScrollTrigger.create({
-        trigger: el,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-        onUpdate: (self) => {
-          const progress = self.progress; // 0 to 1
-          const yOffset = (progress - 0.5) * 2 * speed;
-          gsap.set(el, { yPercent: yOffset, overwrite: "auto" });
-        }
-      });
-      revealTriggers.push(trigger);
-    });
+    /* Capture phase, so this runs before the router's own click handler. Next's
+       <Link> bails out when the event is already default-prevented, which is
+       what lets Lenis own the scroll instead of two systems racing. */
+    document.addEventListener("click", onDocumentClick, true);
 
     return () => {
+      document.removeEventListener("click", onDocumentClick, true);
+      lenis.off("scroll", onScroll);
       lenis.destroy();
       gsap.ticker.remove(updateTicker);
-      if (skewTrigger) {
-        skewTrigger.kill();
-      }
-      revealTriggers.forEach(t => t.kill());
     };
   }, []);
 

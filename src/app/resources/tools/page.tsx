@@ -44,26 +44,26 @@ export default function ToolsPage() {
     : toolsList.filter(tool => tool.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-black text-white font-general">
+    <div className="min-h-screen bg-background text-content-primary">
       <Navbar />
       
       {/* Hero Section */}
       <section className="pt-40 pb-20 px-6 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-accent-soft blur-[120px] rounded-full mix-blend-screen pointer-events-none"></div>
         <div className="container mx-auto max-w-7xl relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-accent-electric text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-tint border border-border text-accent text-sm font-medium mb-6">
               <Wrench size={16} />
               The Tech Stack
             </div>
             <h1 className="text-5xl md:text-7xl font-medium mb-6 tracking-tight">
-              Essential <span className="text-accent-electric">Free Tools</span>
+              Essential <span className="text-accent">Free Tools</span>
             </h1>
-            <p className="text-xl text-white/60 max-w-2xl mx-auto">
+            <p className="text-xl text-content-secondary max-w-2xl mx-auto">
               The exact software stack we use and recommend to build, automate, and scale modern businesses.
             </p>
           </motion.div>
@@ -71,21 +71,21 @@ export default function ToolsPage() {
       </section>
 
       {/* Filter Section */}
-      <section className="py-8 border-y border-white/10 sticky top-[80px] z-40 bg-black/80 backdrop-blur-xl">
+      <section className="py-8 border-y border-border sticky top-[80px] z-40 bg-surface backdrop-blur-xl">
         <div className="container mx-auto max-w-7xl px-6">
           <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-2 md:pb-0">
-            <Filter size={20} className="text-white/40 shrink-0 hidden md:block" />
+            <Filter size={20} className="text-content-muted shrink-0 hidden md:block" />
             {categories.map((category) => (
               <button
                 key={category.name}
                 onClick={() => setActiveCategory(category.name)}
                 className={`shrink-0 flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
                   activeCategory === category.name 
-                    ? "bg-accent-electric text-black shadow-[0_0_20px_rgba(78,163,224,0.3)]" 
-                    : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5"
+                    ? "bg-accent text-accent-contrast shadow-accent" 
+                    : "bg-surface-tint text-content-secondary hover:bg-accent-soft hover:text-content-primary border border-border"
                 }`}
               >
-                <category.icon size={16} className={activeCategory === category.name ? "text-black" : "text-white/40"} />
+                <category.icon size={16} className={activeCategory === category.name ? "text-accent-contrast" : "text-content-muted"} />
                 {category.name}
               </button>
             ))}
@@ -112,37 +112,37 @@ export default function ToolsPage() {
                   href={tool.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative flex flex-col bg-[#050505] p-6 rounded-3xl border border-white/10 overflow-hidden hover:border-accent-electric/50 transition-colors h-full"
+                  className="group relative flex flex-col card p-6 rounded-3xl overflow-hidden hover:border-accent transition-colors h-full"
                 >
                   <div className="flex items-start justify-between mb-6">
                     {/* Tool Logo Placeholder */}
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${tool.color} flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform duration-300`}>
-                      <span className="text-white font-bold tracking-wider">{tool.logoText}</span>
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${tool.color} flex items-center justify-center border border-border group-hover:scale-110 transition-transform duration-300`}>
+                      <span className="text-content-primary font-bold tracking-wider">{tool.logoText}</span>
                     </div>
                     
                     {/* Free Tag */}
-                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white/60">
+                    <div className="px-3 py-1 rounded-full bg-surface-tint border border-border text-xs font-medium text-content-secondary">
                       {tool.tag}
                     </div>
                   </div>
 
                   {/* Content */}
                   <div className="flex flex-col flex-grow">
-                    <h3 className="text-xl font-medium text-white mb-2 group-hover:text-accent-electric transition-colors">
+                    <h3 className="text-xl font-medium text-content-primary mb-2 group-hover:text-accent transition-colors">
                       {tool.name}
                     </h3>
-                    <p className="text-white/50 text-sm leading-relaxed mb-6 flex-grow">
+                    <p className="text-content-secondary text-sm leading-relaxed mb-6 flex-grow">
                       {tool.desc}
                     </p>
                   </div>
 
                   {/* Visit Button */}
-                  <div className="mt-auto w-full py-3 rounded-xl bg-white/5 text-center text-sm font-medium text-white group-hover:bg-accent-electric group-hover:text-black transition-colors flex items-center justify-center gap-2">
+                  <div className="mt-auto w-full py-3 rounded-xl bg-surface-tint text-center text-sm font-medium text-content-primary group-hover:bg-accent group-hover:text-accent-contrast transition-colors flex items-center justify-center gap-2">
                     Visit Website <ExternalLink size={14} />
                   </div>
 
                   {/* Hover Glow Effect */}
-                  <div className="absolute inset-0 pointer-events-none rounded-3xl transition-opacity duration-300 opacity-0 group-hover:opacity-100 shadow-[inset_0_0_50px_rgba(78,163,224,0.1)]"></div>
+                  <div className="absolute inset-0 pointer-events-none rounded-3xl transition-opacity duration-300 opacity-0 group-hover:opacity-100 shadow-[inset_0_0_50px_var(--color-accent-soft)]"></div>
                 </motion.a>
               ))}
             </motion.div>
@@ -150,7 +150,7 @@ export default function ToolsPage() {
 
           {filteredTools.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-white/50 text-lg">No tools found in this category.</p>
+              <p className="text-content-muted text-lg">No tools found in this category.</p>
             </div>
           )}
         </div>

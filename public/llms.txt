@@ -1,55 +1,27 @@
-# ParvInfoSoft
+# Glocious Infotech
 
-> AI training and IT services for business growth and automation.
+> Powering business communication. Driving digital growth.
 
-ParvInfoSoft is an AI training institute and IT services company based in Surat, India, serving clients globally. The website offers comprehensive training programs in Artificial Intelligence, automation, web development, and business growth strategies. It caters to individuals seeking to upskill in AI and businesses looking for advanced IT solutions to enhance their operations and achieve digital transformation.
+Glocious Infotech is a B2B technology company that helps businesses communicate with customers, automate engagement, and accelerate growth through intelligent communication infrastructure, digital growth services, and technology solutions.
 
-The core value proposition lies in providing premium, practical education and cutting-edge IT services. Use cases include learning AI fundamentals, building web and app solutions, implementing business automation, and leveraging AI for lead generation and customer service through chatbots and AI agents. The company aims to empower individuals and businesses with the knowledge and tools necessary to thrive in the digital age.
+Glocious works across three connected capability areas. Business communication covers SMS, RCS, WhatsApp, Voice, IVR, Email and API messaging delivered on reliable, scalable infrastructure. Digital growth covers SEO, SMO, SMM, PPC, content marketing, lead generation and lead management, positioned as measurable business growth programmes rather than standalone marketing services. Technology solutions cover website development, e-commerce, digital solutions and custom technology, including integrations into existing business systems.
 
-When interacting with an LLM about ParvInfoSoft, it's important to understand that the site bridges both educational services (AI training) and professional IT services (software development, consulting, automation). Users might inquire about specific training courses, the benefits of AI in business, or the technical details of IT solutions offered. The content covers a range of AI applications, from foundational concepts to advanced agents and business process automation.
+Industries served include Real Estate, Healthcare, Education, E-commerce, BFSI, Retail, Travel & Hospitality, Automotive, and IT & Technology.
 
-## Core Services
+## Main Pages
 
-- [AI Automation Services](https://www.parvinfosoft.com/services/ai-automation): Learn about AI-driven automation solutions to streamline business processes and improve efficiency.
-- [Web Development Services](https://www.parvinfosoft.com/services/web-development): Discover professional web development services to build modern, responsive, and scalable websites.
-- [App Development Services](https://www.parvinfosoft.com/services/app-development): Explore custom mobile and web application development tailored to your business needs.
-- [CRM & ERP Solutions](https://www.parvinfosoft.com/services/crm-erp): Implement integrated CRM and ERP systems for enhanced business management and customer relations.
-- [Branding Services](https://www.parvinfosoft.com/services/branding): Develop a strong brand identity and strategy to elevate your market presence.
-- [IT Consulting Services](https://www.parvinfosoft.com/services/consulting): Get expert IT consulting to guide your digital transformation and technology strategy.
+- [Glocious Infotech](https://www.glocious.com): Homepage covering business communication, digital growth, technology solutions, AI and automation, and why businesses choose Glocious.
+- [Contact Glocious](https://www.glocious.com/contact): Talk to Glocious about communication, automation and digital growth requirements.
 
-## AI Training Programs
+## Homepage Sections
 
-- [AI Foundation Training](https://www.parvinfosoft.com/training/ai-foundation): Learn the fundamental concepts and principles of Artificial Intelligence.
-- [AI Skill Builder Program](https://www.parvinfosoft.com/training/skill-builder): Enhance your practical AI skills with hands-on training and projects.
-- [Income Accelerator Program](https://www.parvinfosoft.com/training/income-accelerator): Boost your earning potential through advanced AI and technology training.
-- [Corporate AI Training](https://www.parvinfosoft.com/training/corporate): Get customized AI training solutions for your organization's workforce.
-- [AI Workshops](https://www.parvinfosoft.com/training/workshops): Participate in intensive workshops focused on specific AI applications and tools.
-
-## AI Solutions
-
-- [Business Automation Solutions](https://www.parvinfosoft.com/solutions/business-automation): Implement AI solutions for automating repetitive business tasks and workflows.
-- [AI Lead Generation](https://www.parvinfosoft.com/solutions/lead-generation): Utilize AI tools and strategies to generate high-quality business leads.
-- [AI Chatbot Solutions](https://www.parvinfosoft.com/solutions/chatbots): Deploy intelligent chatbots for enhanced customer service and engagement.
-- [AI Agents](https://www.parvinfosoft.com/solutions/ai-agents): Develop and implement custom AI agents for specialized tasks and automation.
-- [E-commerce Growth Solutions](https://www.parvinfosoft.com/solutions/ecommerce-growth): Leverage AI to optimize e-commerce operations and drive sales growth.
-
-## Resources
-
-- [Blog](https://www.parvinfosoft.com/resources/blog): Read insightful articles on AI, technology trends, and business growth strategies.
-- [Free Tools](https://www.parvinfosoft.com/resources/tools): Access a collection of free tools to assist with various digital tasks.
-- [Case Studies](https://www.parvinfosoft.com/resources/case-studies): Explore successful projects and client outcomes showcasing our expertise.
-- [Frequently Asked Questions](https://www.parvinfosoft.com/resources/faqs): Find answers to common questions about our services and training programs.
-- [Support](https://www.parvinfosoft.com/resources/support): Get help and technical support for ParvInfoSoft services and products.
-
-## Getting Started
-
-- [Get Started](https://www.parvinfosoft.com/get-started): Begin your journey with ParvInfoSoft by exploring our services and training options.
+- [Business Communication](https://www.glocious.com/#communication): Every business conversation in one connected ecosystem — SMS, RCS, WhatsApp, Voice, IVR, Email and API messaging.
+- [Digital Growth](https://www.glocious.com/#digital): SEO, SMO, SMM, PPC, content marketing, lead generation and lead management.
+- [Technology Solutions](https://www.glocious.com/#technology): Website development, e-commerce, digital solutions and custom technology.
+- [Industries](https://www.glocious.com/#industries): Real Estate, Healthcare, Education, E-commerce, BFSI, Retail, Travel & Hospitality, Automotive, IT & Technology.
+- [Why Glocious](https://www.glocious.com/#why-glocious): Reliable communication infrastructure, scalable technology, multi-channel engagement, automation and integrated digital capabilities.
 
 ## Legal
 
-- [Privacy Policy](https://www.parvinfosoft.com/privacy-policy): Understand how ParvInfoSoft collects, uses, and protects your personal data.
-- [Terms of Service](https://www.parvinfosoft.com/terms-of-service): Review the terms and conditions governing the use of ParvInfoSoft's website and services.
-
----
-
-This file was generated for www.parvinfosoft.com using the [LLMs.txt Generator Tool](https://llmrefs.com/tools/llms-txt-generator)
+- [Privacy Policy](https://www.glocious.com/privacy-policy): How Glocious Infotech collects, uses and protects personal data.
+- [Terms of Service](https://www.glocious.com/terms-of-service): Terms and conditions governing use of the Glocious Infotech website and services.

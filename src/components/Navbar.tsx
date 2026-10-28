@@ -1,239 +1,595 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ChevronDown, Menu, X, ArrowRight, Search } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ChevronDown, Menu, X, ArrowRight, Sun, Moon, MessageSquare, Wifi, Globe, PhoneCall, Mail, Code2, Search, Share2, MousePointerClick, Users, BarChart2, Building2, HeartPulse, GraduationCap, Landmark, ShoppingBag, Store, Cpu, Layers, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import AISearchModal from "./AISearchModal";
 import MagneticButton from "./MagneticButton";
+import { useTheme } from "./ThemeProvider";
 
-const navItems = [
-  {
-    title: "Services",
-    href: "/#services",
-    dropdown: [
-      { title: "AI Voice Receptionists", href: "/services/ai-automation" },
-      { title: "Real Estate AI Systems", href: "/solutions/lead-generation" },
-      { title: "Custom Web Development", href: "/services/web-development" },
-      { title: "Mobile App Development", href: "/services/app-development" },
-      { title: "CRM / ERP Automation", href: "/services/crm-erp" },
-      { title: "AI Strategy & Consulting", href: "/services/consulting" }
-    ]
-  },
+// ─── Nav structure ────────────────────────────────────────────
+// "Solutions" uses a two-column mega-panel because it has many items.
+// "PingDoot" is a single product, so it renders as a direct link (a
+// one-item dropdown would only add a click). All other dropdowns use a
+// single-column panel.
+//
+// NOTE ON DESTINATIONS
+// Solutions and the two mapped disciplines now have dedicated pages under
+// /solutions/[slug], so those items link there. The remaining disciplines and
+// industries still deep-link to the homepage section that documents them —
+// when those sub-pages are built, only the `href` values need to change.
+
+type NavDropdownItem = {
+  title: string;
+  href: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon?: any;
+  desc?: string;
+};
+
+type NavItem = {
+  title: string;
+  href: string;
+  /** If omitted, the item renders as a plain link with no dropdown */
+  dropdown?: NavDropdownItem[];
+  /** Two-column mega panel */
+  mega?: boolean;
+};
+
+const navItems: NavItem[] = [
   {
     title: "Solutions",
-    href: "/#solutions",
+    href: "/solutions",
+    mega: true,
     dropdown: [
-      { title: "Business Process Automation", href: "/solutions/business-automation" },
-      { title: "Lead Generation Engines", href: "/solutions/lead-generation" },
-      { title: "Custom AI Chatbots", href: "/solutions/chatbots" },
-      { title: "Autonomous AI Agents", href: "/solutions/ai-agents" },
-      { title: "E-commerce AI Scale", href: "/solutions/ecommerce-growth" }
-    ]
+      { title: "Business Messaging", href: "/solutions/business-messaging", icon: MessageSquare, desc: "SMS, OTP, Transactional & Promotional" },
+      { title: "RCS",                href: "/solutions/rcs-messaging",      icon: Wifi,          desc: "Rich cards, carousels & verified sender" },
+      { title: "WhatsApp",           href: "/solutions/whatsapp-business",  icon: Globe,         desc: "WhatsApp Business Communication" },
+      { title: "Voice & IVR",        href: "/solutions/voice-ivr",          icon: PhoneCall,     desc: "IVR flows & intelligent call routing" },
+      { title: "Email",              href: "/solutions/email-communication", icon: Mail,         desc: "Transactional, OTP & promotional email" },
+      { title: "API Messaging",      href: "/solutions/api-messaging",      icon: Code2,         desc: "Programmable, developer-first messaging" },
+    ],
   },
   {
-    title: "Case Studies",
-    href: "/resources/case-studies",
+    title: "Digital Growth",
+    href: "/#digital",
     dropdown: [
-      { title: "Healthcare Voice Receptionist", href: "/resources/case-studies/ai-hospital-receptionist" },
-      { title: "Live AI System Demos", href: "/#demos" },
-      { title: "All Client Impact Reports", href: "/resources/case-studies" }
-    ]
+      { title: "SEO",               href: "/#digital", icon: Search },
+      { title: "SMO",               href: "/#digital", icon: Share2 },
+      { title: "SMM",               href: "/#digital", icon: Share2 },
+      { title: "PPC",               href: "/#digital", icon: MousePointerClick },
+      { title: "Lead Generation",   href: "/#digital", icon: Users },
+      { title: "Lead Management",   href: "/solutions/lead-management", icon: BarChart2 },
+    ],
+  },
+  {
+    title: "Technology",
+    href: "/#technology",
+    dropdown: [
+      { title: "Website Development", href: "/#technology", icon: Layers },
+      { title: "E-commerce",          href: "/#technology", icon: ShoppingCart },
+      { title: "Digital Solutions",   href: "/solutions/website-digital-solutions", icon: Cpu },
+    ],
+  },
+  {
+    // Single product — no dropdown. A one-item menu would just add a click.
+    title: "PingDoot",
+    href: "/#technology",
+  },
+  {
+    title: "Industries",
+    href: "/#industries",
+    dropdown: [
+      { title: "Real Estate",  href: "/#industries", icon: Building2 },
+      { title: "Healthcare",   href: "/#industries", icon: HeartPulse },
+      { title: "Education",    href: "/#industries", icon: GraduationCap },
+      { title: "BFSI",         href: "/#industries", icon: Landmark },
+      { title: "E-commerce",   href: "/#industries", icon: ShoppingBag },
+      { title: "Retail",       href: "/#industries", icon: Store },
+      { title: "Technology",   href: "/#industries", icon: Cpu },
+    ],
   },
   {
     title: "Company",
-    href: "/#about",
+    href: "/#why-glocious",
     dropdown: [
-      { title: "About ParvInfoSoft", href: "/#about" },
-      { title: "Meet the Founder", href: "/#founder" },
-      { title: "Surat Office Presence", href: "/#founder" },
-      { title: "Systems FAQ", href: "/#faq" },
-      { title: "Contact Support", href: "/resources/support" }
-    ]
-  }
+      { title: "About",   href: "/#why-glocious" },
+      { title: "Contact", href: "/contact" },
+    ],
+  },
 ];
+
+// ─── Dropdown panel ───────────────────────────────────────────
+
+function DropdownPanel({
+  item,
+  pathname,
+  onClose,
+}: {
+  item: NavItem;
+  pathname: string;
+  onClose: () => void;
+}) {
+  if (!item.dropdown) return null;
+
+  const isMega = item.mega;
+  const panelWidth = isMega ? "w-[480px]" : item.dropdown.length > 4 ? "w-[220px]" : "w-[200px]";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6, filter: "blur(6px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      exit={{ opacity: 0, y: 6, filter: "blur(6px)" }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      role="menu"
+      className={`surface-overlay absolute top-full left-0 mt-0 ${panelWidth} overflow-hidden`}
+      style={{ zIndex: 200 }}
+      // Keep open while mouse moves into the panel
+      onMouseEnter={() => {}}
+    >
+      {isMega ? (
+        // Two-column mega panel
+        <div className="p-2 grid grid-cols-2 gap-0.5">
+          {item.dropdown.map((sub) => {
+            const Icon = sub.icon;
+            const active = pathname === sub.href;
+            return (
+              <Link
+                key={sub.title}
+                href={sub.href}
+                role="menuitem"
+                onClick={onClose}
+                className="group flex items-start gap-3 p-3 rounded-lg transition-colors outline-none hover:bg-accent-soft focus-visible:bg-accent-soft"
+              >
+                {Icon && (
+                  <div
+                    className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 border transition-colors ${
+                      active ? "bg-accent-soft border-accent-soft" : "bg-content-primary/[0.04] border-border"
+                    }`}
+                  >
+                    <Icon size={13} className={active ? "text-accent" : "text-content-secondary"} />
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p
+                    className={`text-xs font-medium leading-snug ${
+                      active ? "text-accent" : "text-content-primary"
+                    }`}
+                  >
+                    {sub.title}
+                  </p>
+                  {sub.desc && (
+                    <p className="text-2xs mt-0.5 leading-snug text-content-secondary">
+                      {sub.desc}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        // Single-column panel
+        <div className="p-1.5">
+          {item.dropdown.map((sub) => {
+            const Icon = sub.icon;
+            const active = pathname === sub.href;
+            return (
+              <Link
+                key={sub.title}
+                href={sub.href}
+                role="menuitem"
+                onClick={onClose}
+                className="group/link flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors outline-none hover:bg-accent-soft focus-visible:bg-accent-soft"
+              >
+                {Icon && (
+                  <Icon
+                    size={13}
+                    className={`shrink-0 ${active ? "text-accent" : "text-content-secondary"}`}
+                  />
+                )}
+                <span
+                  className={`text-xs font-medium flex-1 ${
+                    active ? "text-accent" : "text-content-secondary"
+                  }`}
+                >
+                  {sub.title}
+                </span>
+                <ArrowRight
+                  size={11}
+                  className="text-accent -translate-x-1 opacity-0 group-hover/link:translate-x-0 group-hover/link:opacity-100 transition-all duration-150"
+                />
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  // Mobile: which accordion section is expanded
+  const [mobileOpenIndex, setMobileOpenIndex] = useState<number | null>(null);
   const pathname = usePathname();
+  const { theme, mounted, toggleTheme } = useTheme();
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Close dropdown on outside click
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenIndex(null);
+      }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setMobileOpenIndex(null);
+  }, [pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
+
+  // Hover intent — small delay prevents flicker when moving between items
+  const handleMouseEnter = useCallback((index: number) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenIndex(index);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    closeTimer.current = setTimeout(() => setOpenIndex(null), 120);
+  }, []);
+
+  const handleDropdownMouseEnter = useCallback(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  }, []);
+
+  const handleDropdownMouseLeave = useCallback(() => {
+    closeTimer.current = setTimeout(() => setOpenIndex(null), 120);
+  }, []);
+
+  // Keyboard: open/close with Enter or Space, close with Escape
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent, index: number) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setOpenIndex((prev) => (prev === index ? null : index));
+      }
+      if (e.key === "Escape") {
+        setOpenIndex(null);
+      }
+    },
+    []
+  );
+
+  // Sun is shown while dark (action = go light) and vice-versa, so the icon
+  // always depicts the state the button will switch to.
+  const isDark = theme === "dark";
+  const ThemeIcon = !mounted ? null : isDark ? <Sun size={16} /> : <Moon size={16} />;
+  const themeLabel = isDark ? "Switch to light mode" : "Switch to dark mode";
+
+  const isScrolledOrInner = scrolled || pathname !== "/";
+
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 border-b ${
-        scrolled || pathname !== '/'
-          ? "bg-black/70 backdrop-blur-xl py-4 border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]" 
-          : "bg-transparent py-6 md:py-[20px] border-transparent"
-      } px-6 md:px-[120px]`}
+    <header
+      ref={navRef}
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-base border-b ${
+        isScrolledOrInner
+          ? "backdrop-blur-xl py-3 shadow-card"
+          : "py-5"
+      }`}
+      style={{
+        backgroundColor: isScrolledOrInner ? "var(--color-nav-background)" : "transparent",
+        borderColor: isScrolledOrInner ? "var(--color-border)" : "transparent",
+      }}
     >
-      <div className="flex items-center justify-between">
-        
-        {/* Left Side: Logo */}
-        <div className="flex items-center gap-[60px]">
-          <Link href="/" className="w-[187px] flex items-center text-white font-general font-semibold text-xl tracking-wide shrink-0 z-50">
-            ParvInfoSoft
+      {/* Same container as every section, so the logo lines up with the
+          hero headline instead of sitting on its own wider grid. */}
+      <div className="container-page flex items-center justify-between">
+
+        {/* ── Logo ─────────────────────────────────────────── */}
+        <div className="flex items-center gap-8 xl:gap-10">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-display font-bold text-[16px] tracking-tight shrink-0 z-50 rounded text-content-primary"
+            aria-label="Glocious — home"
+          >
+            <div
+              className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[11px] font-black bg-accent text-accent-contrast"
+              aria-hidden
+            >
+              G
+            </div>
+            <span>Glocious</span>
           </Link>
 
-          {/* Nav Links - Desktop */}
-          <nav className="hidden md:flex items-center gap-[30px]" onMouseLeave={() => setHoveredIndex(null)}>
+          {/* ── Desktop navigation ──────────────────────────── */}
+          <nav
+            className="hidden lg:flex items-center gap-1"
+            aria-label="Main navigation"
+            onMouseLeave={handleMouseLeave}
+          >
             {navItems.map((item, index) => {
-              const isActive = pathname.startsWith(`/${item.title.toLowerCase()}`);
-              return (
-                <div 
-                  key={item.title} 
-                  className="relative group"
-                  onMouseEnter={() => setHoveredIndex(index)}
-                >
-                  <Link 
-                    href={item.href} 
-                    className={`flex items-center gap-[14px] text-[14px] font-medium hover:text-white transition-colors py-4 ${isActive ? 'text-accent-electric' : 'text-white/80'}`}
-                  >
-                    {item.title}
-                    <ChevronDown 
-                      size={14} 
-                      className={`transition-transform duration-300 ${hoveredIndex === index ? "rotate-180 text-white" : isActive ? 'text-accent-electric' : 'text-white/80'}`} 
-                    />
-                  </Link>
+              const hasDropdown = !!item.dropdown?.length;
+              const isOpen = openIndex === index;
+              // Highlight if current route starts with a dropdown href
+              const isActive =
+                item.dropdown?.some((d) => pathname === d.href) ||
+                (item.href !== "/" && pathname.startsWith(item.href.replace("/#", "/")));
 
-                  {/* Mega Dropdown */}
-                  <AnimatePresence>
-                    {hoveredIndex === index && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, y: 10, filter: "blur(10px)" }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                        className="absolute top-full left-0 mt-2 w-[280px] bg-[#050505]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden"
-                      >
-                        <div className="p-2">
-                          {item.dropdown.map((subItem) => (
-                            <Link 
-                              key={subItem.title} 
-                              href={subItem.href}
-                              className="group/link flex items-center justify-between p-4 rounded-xl hover:bg-white/5 transition-colors"
-                            >
-                              <span className={`text-[14px] font-medium transition-colors ${pathname === subItem.href ? 'text-accent-electric' : 'text-white/80 group-hover/link:text-white'}`}>
-                                {subItem.title}
-                              </span>
-                              <ArrowRight size={14} className={`-translate-x-2 transition-all duration-300 ${pathname === subItem.href ? 'text-accent-electric translate-x-0 opacity-100' : 'text-white/0 group-hover/link:text-accent-electric group-hover/link:translate-x-0 opacity-0 group-hover/link:opacity-100'}`} />
-                            </Link>
-                          ))}
-                        </div>
-                        <div className="bg-white/5 p-4 border-t border-white/5">
-                          <span className="text-[11px] text-white/40 uppercase tracking-widest font-bold">Premium Multi-Page Ecosystem</span>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+              return (
+                <div
+                  key={item.title}
+                  className="relative"
+                  onMouseEnter={() => hasDropdown && handleMouseEnter(index)}
+                >
+                  {/* Nav trigger — dropdown button, or plain link when the
+                      item has no sub-navigation (e.g. PingDoot) */}
+                  {hasDropdown ? (
+                    <button
+                      type="button"
+                      aria-haspopup="true"
+                      aria-expanded={isOpen}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      onClick={() => setOpenIndex((p) => (p === index ? null : index))}
+                      className={`flex items-center gap-1.5 px-2.5 py-2 rounded-md text-xs xl:text-sm font-medium transition-colors hover:bg-accent-soft ${
+                        isActive || isOpen ? "text-content-primary" : "text-content-secondary"
+                      } ${isOpen ? "bg-accent-soft" : ""}`}
+                      onFocus={() => setOpenIndex(index)}
+                      onBlur={(e) => {
+                        // Only close if focus moves outside the nav item group
+                        if (!e.currentTarget.parentElement?.contains(e.relatedTarget as Node)) {
+                          setTimeout(() => setOpenIndex((p) => (p === index ? null : p)), 150);
+                        }
+                      }}
+                    >
+                      {item.title}
+                      <ChevronDown
+                        size={12}
+                        className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                        aria-hidden
+                      />
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`flex items-center px-2.5 py-2 rounded-md text-xs xl:text-sm font-medium transition-colors hover:bg-accent-soft ${
+                        isActive ? "text-content-primary" : "text-content-secondary"
+                      }`}
+                    >
+                      {item.title}
+                    </Link>
+                  )}
+
+                  {/* Dropdown panel */}
+                  {hasDropdown && (
+                    <div
+                      onMouseEnter={handleDropdownMouseEnter}
+                      onMouseLeave={handleDropdownMouseLeave}
+                    >
+                      <AnimatePresence>
+                        {isOpen && (
+                          <DropdownPanel
+                            item={item}
+                            pathname={pathname}
+                            onClose={() => setOpenIndex(null)}
+                          />
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </nav>
         </div>
 
-        {/* Right Side: Actions (Search + Get Started) */}
-        <div className="hidden md:flex items-center gap-6">
-          <MagneticButton>
-            <button 
-              onClick={() => setSearchOpen(true)}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white/50 hover:text-accent-electric hover:bg-white/5 border border-transparent hover:border-white/10 transition-all group"
-            >
-              <Search size={18} className="group-hover:scale-110 transition-transform" />
-            </button>
-          </MagneticButton>
+        {/* ── Right actions ────────────────────────────────── */}
+        <div className="hidden lg:flex items-center gap-2">
+          {/* Theme toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="icon-btn rounded-full"
+            aria-label={themeLabel}
+            title={themeLabel}
+          >
+            {ThemeIcon}
+          </button>
 
+          {/* CTA */}
           <MagneticButton>
-            <Link 
-              href="/get-started"
-              className="relative inline-flex items-center justify-center p-[0.6px] rounded-full overflow-hidden group bg-white/20 transition-all hover:bg-white/40 hover:scale-[1.02] active:scale-95"
-            >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[2px] bg-white opacity-60 blur-[3px] group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative bg-black rounded-full px-[29px] py-[11px] h-full w-full flex items-center justify-center transition-colors group-hover:bg-[#0A0A0A]">
-                <span className="text-white text-[14px] font-medium">Calculate ROI</span>
-              </div>
+            <Link href="/contact" className="btn btn-primary">
+              Talk to Us
             </Link>
           </MagneticButton>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* ── Mobile menu button ───────────────────────────── */}
         <button
-          className="md:hidden text-white z-[110] relative p-2"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          type="button"
+          className="icon-btn lg:hidden z-[110] relative text-content-primary"
+          style={{ width: "2.25rem", height: "2.25rem" }}
+          onClick={() => setMobileMenuOpen((v) => !v)}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu"
         >
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          <AnimatePresence mode="wait" initial={false}>
+            {mobileMenuOpen ? (
+              <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                <X size={22} />
+              </motion.span>
+            ) : (
+              <motion.span key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                <Menu size={22} />
+              </motion.span>
+            )}
+          </AnimatePresence>
         </button>
-
       </div>
 
-      <AISearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
-
-      {/* Fullscreen Mobile Menu Panel */}
+      {/* ── Mobile menu ──────────────────────────────────────────
+          Slide-down panel — cleaner on mobile than a full-screen takeover.
+          Accordion per nav section. Theme toggle + CTA at the bottom.
+      ─────────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, clipPath: "circle(0% at 100% 0)" }}
-            animate={{ opacity: 1, clipPath: "circle(150% at 100% 0)" }}
-            exit={{ opacity: 0, clipPath: "circle(0% at 100% 0)" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 bg-[#050505] z-[100] flex flex-col pt-32 px-6 h-screen overflow-y-auto"
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="fixed inset-0 top-0 z-[99] flex flex-col overflow-y-auto lg:hidden bg-background"
           >
-            <div className="flex flex-col gap-8 pb-32">
-              {navItems.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + (index * 0.1) }}
-                  className="border-b border-white/10 pb-6"
-                >
-                  <Link 
-                    href={item.href} 
-                    className="text-3xl font-medium text-white mb-6 flex justify-between items-center"
-                    onClick={() => setMobileMenuOpen(false)}
+            {/* Mobile header */}
+            <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b border-border">
+              <Link
+                href="/"
+                className="flex items-center gap-2 font-display font-bold text-[16px] tracking-tight text-content-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <div className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[11px] font-black bg-accent text-accent-contrast">
+                  G
+                </div>
+                Glocious
+              </Link>
+              <button
+                type="button"
+                className="icon-btn text-content-primary"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Nav items as accordion */}
+            <div className="flex-1 px-4 py-3">
+              {navItems.map((item, index) => {
+                const isExpanded = mobileOpenIndex === index;
+                const hasDropdown = !!item.dropdown?.length;
+                return (
+                  <div
+                    key={item.title}
+                    className="border-b border-border last:border-0"
                   >
-                    {item.title}
-                    <ArrowRight className="text-accent-electric opacity-50" />
-                  </Link>
-                  <div className="flex flex-col gap-4 pl-4 border-l border-white/10">
-                    {item.dropdown.map((sub) => (
-                      <Link 
-                        key={sub.title} 
-                        href={sub.href} 
-                        className={`text-lg transition-colors ${pathname === sub.href ? 'text-accent-electric' : 'text-white/60 hover:text-white'}`}
+                    {hasDropdown ? (
+                      <>
+                        {/* Accordion trigger */}
+                        <button
+                          type="button"
+                          className="w-full flex items-center justify-between py-3.5 text-[15px] font-semibold text-left text-content-primary"
+                          onClick={() => setMobileOpenIndex((p) => (p === index ? null : index))}
+                          aria-expanded={isExpanded}
+                        >
+                          {item.title}
+                          <ChevronDown
+                            size={16}
+                            className={`transition-transform duration-200 text-content-secondary ${
+                              isExpanded ? "rotate-180" : ""
+                            }`}
+                            aria-hidden
+                          />
+                        </button>
+
+                        {/* Accordion content */}
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.22, ease: "easeInOut" }}
+                              className="overflow-hidden"
+                            >
+                              <div className="pb-3 grid grid-cols-2 gap-1">
+                                {item.dropdown!.map((sub) => {
+                                  const Icon = sub.icon;
+                                  const active = pathname === sub.href;
+                                  return (
+                                    <Link
+                                      key={sub.title}
+                                      href={sub.href}
+                                      className={`flex items-center gap-2 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors hover:bg-accent-soft ${
+                                        active ? "text-accent bg-accent-soft" : "text-content-secondary"
+                                      }`}
+                                      onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                      {Icon && (
+                                        <Icon
+                                          size={13}
+                                          className={`shrink-0 ${active ? "text-accent" : "text-content-secondary"}`}
+                                        />
+                                      )}
+                                      {sub.title}
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="flex items-center py-3.5 text-[15px] font-semibold text-content-primary"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        {sub.title}
+                        {item.title}
                       </Link>
-                    ))}
+                    )}
                   </div>
-                </motion.div>
-              ))}
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="mt-4"
+                );
+              })}
+            </div>
+
+            {/* Bottom actions */}
+            <div className="px-4 py-5 space-y-3 shrink-0 border-t border-border">
+              <Link
+                href="/contact"
+                className="btn btn-primary btn-lg btn-block"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                <Link
-                  href="/get-started"
-                  className="w-full block py-5 rounded-full bg-white text-black text-center text-xl font-medium shadow-[0_0_30px_rgba(255,255,255,0.2)] active:scale-95 transition-transform sticky bottom-6"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Calculate ROI
-                </Link>
-              </motion.div>
+                Talk to Us
+              </Link>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="btn btn-secondary btn-block"
+                aria-label={themeLabel}
+              >
+                {mounted && (isDark ? <Sun size={15} /> : <Moon size={15} />)}
+                {mounted ? (isDark ? "Light mode" : "Dark mode") : "Toggle theme"}
+              </button>
             </div>
           </motion.div>
         )}

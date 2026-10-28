@@ -1,50 +1,30 @@
-"use client";
-
-import React, { useEffect } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
-
+/**
+ * Ambient page background — a static brand wash plus the signature hairline
+ * grid. Deliberately NOT interactive: a 600px `blur(120px)` layer that follows
+ * the cursor repaints the whole viewport on every mouse move, which costs far
+ * more than it communicates. The wash is anchored behind the first viewport
+ * instead, so it reads as depth without ever moving.
+ *
+ * All colour comes from theme tokens, so it renders correctly in both modes
+ * (a faint brand tint on light paper, a luminous wash on dark navy).
+ */
 export default function InteractiveBackground() {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  
-  const springConfig = { damping: 25, stiffness: 150 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
-
-  useEffect(() => {
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-    };
-
-    window.addEventListener("mousemove", moveCursor);
-    return () => {
-      window.removeEventListener("mousemove", moveCursor);
-    };
-  }, [cursorX, cursorY]);
-
   return (
-    <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden bg-[#030712]">
-      {/* Interactive Mouse Glow */}
-      <motion.div
-        className="absolute rounded-full w-[600px] h-[600px] blur-[120px] opacity-20"
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-[-1] overflow-hidden bg-background"
+    >
+      {/* Static brand wash behind the first viewport */}
+      <div
+        className="absolute inset-x-0 top-0 h-[75vh]"
         style={{
-          background: "radial-gradient(circle, rgba(0, 240, 255, 0.4) 0%, rgba(138, 43, 226, 0.1) 50%, transparent 70%)",
-          left: cursorXSpring,
-          top: cursorYSpring,
-          translateX: "-50%",
-          translateY: "-50%",
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 0%, var(--glow-color) 0%, transparent 70%)",
         }}
       />
-      
-      {/* Subtle Static Grid Pattern for Texture */}
-      <div 
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}
-      />
+
+      {/* Architectural hairline grid */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-60" />
     </div>
   );
 }

@@ -1,102 +1,118 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import MagneticButton from "./MagneticButton";
+
+// Destinations mirror the single-page architecture: capability links jump to
+// the homepage section that documents them, and Contact is the only standalone
+// route today. Swap the anchors for real URLs as sub-pages ship.
+const footerLinks = {
+  Solutions: [
+    { label: "Business Communication", href: "/#communication" },
+    { label: "Digital Growth", href: "/#digital" },
+    { label: "Technology Solutions", href: "/#technology" },
+    { label: "Industries", href: "/#industries" },
+  ],
+  Company: [
+    { label: "Why Glocious", href: "/#why-glocious" },
+    { label: "Contact", href: "/contact" },
+  ],
+};
+
+const socialLinks = [
+  { name: "LinkedIn", url: "https://www.linkedin.com/company/glocious" },
+  { name: "Twitter / X", url: "https://twitter.com/glocious" },
+  { name: "Instagram", url: "https://www.instagram.com/glocious" },
+];
 
 export default function Footer() {
   return (
-    <footer id="contact" className="bg-transparent border-t border-white/10 pt-24 pb-8 font-general">
-      <div className="container mx-auto px-6 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-24">
-          
-          {/* Logo Column */}
-          <div className="md:col-span-1">
-            <div className="text-white font-semibold text-2xl tracking-wide mb-6">
-              ParvInfoSoft
-            </div>
-            <p className="text-white/50 text-sm leading-relaxed max-w-[250px]">
-              High-Performance B2B AI Agency & Automation Systems Provider serving Surat, Gujarat, and global enterprises.
+    <footer className="border-t border-border bg-background-subtle pt-20 pb-8">
+      <div className="container-page">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+
+          {/* Brand column */}
+          <div className="lg:col-span-2">
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 font-display font-bold text-[17px] tracking-tight mb-5 text-content-primary"
+            >
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-black bg-accent text-accent-contrast">
+                G
+              </div>
+              Glocious Infotech
+            </Link>
+            <p className="text-sm leading-relaxed max-w-[280px] text-content-secondary">
+              Powering business communication, driving digital growth, and delivering technology solutions for modern enterprises.
             </p>
+            <div className="mt-6 pt-5 border-t border-border">
+              <p className="text-xs leading-relaxed text-content-secondary">
+                <span className="font-medium text-content-primary">Glocious Infotech Pvt. Ltd.</span><br />
+                India
+              </p>
+            </div>
           </div>
 
-          {/* Company Column */}
-          <div>
-            <h4 className="text-white font-medium mb-6">Company</h4>
-            <ul className="space-y-4">
-              {["About", "Services", "Portfolio", "Pricing"].map((link) => (
-                <li key={link} className="h-6 flex items-center">
-                  <MagneticButton>
-                    <Link href={`/#${link.toLowerCase()}`} className="text-white/50 hover:text-white transition-colors text-sm py-1 block">
-                      {link}
+          {/* Link columns */}
+          {Object.entries(footerLinks).map(([heading, links]) => (
+            <div key={heading}>
+              <h4 className="text-xs font-semibold mb-5 uppercase tracking-widest text-content-primary">
+                {heading}
+              </h4>
+              <ul className="space-y-3">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-content-secondary hover:text-content-primary transition-colors"
+                    >
+                      {link.label}
                     </Link>
-                  </MagneticButton>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Column */}
-          <div>
-            <h4 className="text-white font-medium mb-6">Contact</h4>
-            <ul className="space-y-4">
-              <li className="h-6 flex items-center">
-                <MagneticButton>
-                  <a href="tel:9081553331" className="text-white/50 hover:text-white transition-colors text-sm py-1 block">
-                    Phone: +91 90815 53331
-                  </a>
-                </MagneticButton>
-              </li>
-              <li className="h-6 flex items-center">
-                <MagneticButton>
-                  <a href="mailto:parvinfosoftadmin@gmail.com" className="text-white/50 hover:text-white transition-colors text-sm py-1 block">
-                    Email: parvinfosoftadmin@gmail.com
-                  </a>
-                </MagneticButton>
-              </li>
-              <li className="pt-2 border-t border-white/5">
-                <p className="text-white/50 text-sm leading-relaxed">
-                  <strong className="text-white/70">Surat Office:</strong><br/>
-                  4019 The Palladium Mall,<br/>
-                  Near Vijaynagar, Chikuwadi,<br/>
-                  Nana Varachha, Surat, Gujarat 395010
-                </p>
-              </li>
-            </ul>
-          </div>
-
-          {/* Social Column */}
-          <div>
-            <h4 className="text-white font-medium mb-6">Social</h4>
-            <ul className="space-y-4">
-              {[
-                { name: "Instagram", url: "https://www.instagram.com/parvinfosoftai?igsh=MWVkdzFqb25hMXh2ZQ==" },
-                { name: "LinkedIn", url: "https://www.linkedin.com/company/parvinfosoft/" },
-                { name: "WhatsApp", url: "https://wa.me/919081553331" }
-              ].map((social) => (
-                <li key={social.name} className="h-6 flex items-center">
-                  <MagneticButton>
-                    <a href={social.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-1 text-white/50 hover:text-white transition-colors text-sm py-1">
-                      {social.name}
-                      <ArrowUpRight size={14} className="opacity-0 -translate-x-2 translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all" />
-                    </a>
-                  </MagneticButton>
-                </li>
-              ))}
-            </ul>
-          </div>
-
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        {/* Bottom Strip */}
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/40 text-xs">
-            © 2024 ParvInfoSoft. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            <Link href="/privacy-policy" className="text-white/40 hover:text-white text-xs transition-colors">Privacy Policy</Link>
-            <Link href="/terms-of-service" className="text-white/40 hover:text-white text-xs transition-colors">Terms of Service</Link>
+        {/* Social + bottom strip */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pt-8 border-t border-border">
+          <div className="flex items-center gap-5">
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-1 text-xs font-medium text-content-secondary hover:text-content-primary transition-colors"
+              >
+                {social.name}
+                <ArrowUpRight
+                  size={12}
+                  className="opacity-0 -translate-x-1 translate-y-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all"
+                />
+              </a>
+            ))}
+          </div>
+
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+            <p className="text-xs text-content-secondary">
+              © {new Date().getFullYear()} Glocious Infotech Pvt. Ltd. All rights reserved.
+            </p>
+            <div className="flex gap-4">
+              <Link
+                href="/privacy-policy"
+                className="text-xs text-content-secondary hover:text-content-primary transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms-of-service"
+                className="text-xs text-content-secondary hover:text-content-primary transition-colors"
+              >
+                Terms of Service
+              </Link>
+            </div>
           </div>
         </div>
       </div>

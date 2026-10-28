@@ -27,8 +27,10 @@ export async function POST(request: Request) {
       requirements: requirements || 'N/A'
     };
 
-    // Send data to Google Sheets Webhook (Google Apps Script Web App)
-    const googleWebhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || "https://script.google.com/macros/s/AKfycbwpBMojfwY94F8o_kwIBaCqANmXAvYUtvmUe_jqRIkGFXiwLswvkIvmZvsbyCUYLwLM/exec";
+    // Send data to Google Sheets Webhook (Google Apps Script Web App).
+    // Configure GOOGLE_SHEET_WEBHOOK_URL in the environment — the endpoint is
+    // a credential and must never be committed to the repository.
+    const googleWebhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
     let sheetSuccess = false;
     
     if (googleWebhookUrl) {

@@ -2,432 +2,267 @@
 
 /**
  * CinematicStoryScroll.tsx
- * ─────────────────────────────────────────────────────────────
- * Awwwards-quality GSAP horizontal storytelling ribbon.
+ * GSAP horizontal storytelling ribbon — Glocious brand messaging.
  *
- * Architecture:
- *  - Section pins during horizontal travel (GSAP ScrollTrigger)
- *  - ONE long flex track translates on X via scrub tween
- *  - SVG glyphs are inline punctuation — not separate components
- *  - Layered parallax: track at 1×, accent layer at 0.6×
- *  - Floating micro-animations on SVG elements via GSAP ticker
- *  - Fully responsive: cinematic on desktop, adapted on mobile
- *  - Zero hydration issues (all GSAP inside useEffect)
- *  - Proper cleanup on unmount
- * ─────────────────────────────────────────────────────────────
+ * Motion contract
+ * ---------------
+ * Exactly one scroll-driven animation: the ribbon tracks horizontally while the
+ * section is pinned (free GSAP core + ScrollTrigger only, no Club plugins).
+ * There is deliberately no secondary parallax layer and no idle floating —
+ * continuous motion that isn't tied to the reader's scroll just costs frames.
  */
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// ─── SVG Primitive Components ────────────────────────────────
-// Each is self-contained, aria-hidden, uses the site palette.
-
-/** Minimal glowing node — acts like a full-stop */
-const NodeDot = ({ size = 10, color = "#4EA3E0" }: { size?: number; color?: string }) => (
-  <svg
-    width={size * 3}
-    height={size * 3}
-    viewBox={`0 0 ${size * 3} ${size * 3}`}
-    fill="none"
-    aria-hidden
-    className="inline-block align-middle shrink-0"
-  >
-    <circle cx={size * 1.5} cy={size * 1.5} r={size * 0.3} fill={color} />
-    <circle cx={size * 1.5} cy={size * 1.5} r={size * 0.7} fill={color} fillOpacity="0.18" />
-    <circle cx={size * 1.5} cy={size * 1.5} r={size * 1.4} fill={color} fillOpacity="0.06" />
+const NodeDot = ({ size = 10 }: { size?: number }) => (
+  <svg width={size * 3} height={size * 3} viewBox={`0 0 ${size * 3} ${size * 3}`} fill="none" aria-hidden className="inline-block align-middle shrink-0">
+    <circle cx={size * 1.5} cy={size * 1.5} r={size * 0.3} fill="var(--color-accent)" />
+    <circle cx={size * 1.5} cy={size * 1.5} r={size * 0.7} fill="var(--color-accent)" fillOpacity="0.18" />
+    <circle cx={size * 1.5} cy={size * 1.5} r={size * 1.4} fill="var(--color-accent)" fillOpacity="0.06" />
   </svg>
 );
 
-/** Smooth S-curve connector with arrowhead */
+const NodeDotAlt = ({ size = 6 }: { size?: number }) => (
+  <svg width={size * 3} height={size * 3} viewBox={`0 0 ${size * 3} ${size * 3}`} fill="none" aria-hidden className="inline-block align-middle shrink-0">
+    <circle cx={size * 1.5} cy={size * 1.5} r={size * 0.3} fill="var(--color-accent-alt)" />
+    <circle cx={size * 1.5} cy={size * 1.5} r={size * 0.7} fill="var(--color-accent-alt)" fillOpacity="0.18" />
+    <circle cx={size * 1.5} cy={size * 1.5} r={size * 1.4} fill="var(--color-accent-alt)" fillOpacity="0.06" />
+  </svg>
+);
+
 const FlowArrow = () => (
-  <svg width="100" height="32" viewBox="0 0 100 32" fill="none" aria-hidden
-    className="inline-block align-middle shrink-0">
-    <path
-      d="M0 16 C25 4, 45 28, 70 16 S90 4, 100 16"
-      stroke="url(#fa-g)"
-      strokeWidth="1.2"
-      fill="none"
-      strokeLinecap="round"
-    />
-    {/* Arrowhead */}
-    <path d="M88 10 L100 16 L88 22" stroke="#4EA3E0" strokeWidth="1.2"
-      fill="none" strokeLinecap="round" strokeLinejoin="round" />
+  <svg width="90" height="28" viewBox="0 0 90 28" fill="none" aria-hidden className="inline-block align-middle shrink-0">
+    <path d="M0 14 C20 4, 40 24, 62 14 S80 4, 90 14" stroke="url(#fa-gl)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+    <path d="M78 9 L90 14 L78 20" stroke="var(--color-accent)" strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
     <defs>
-      <linearGradient id="fa-g" x1="0" y1="0" x2="100" y2="0" gradientUnits="userSpaceOnUse">
-        <stop offset="0%"   stopColor="#4EA3E0" stopOpacity="0.05" />
-        <stop offset="50%"  stopColor="#4EA3E0" stopOpacity="0.9"  />
-        <stop offset="100%" stopColor="#a855f7" stopOpacity="0.05" />
+      <linearGradient id="fa-gl" x1="0" y1="0" x2="90" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.05" />
+        <stop offset="50%" stopColor="var(--color-accent)" stopOpacity="0.85" />
+        <stop offset="100%" stopColor="var(--color-accent-alt)" stopOpacity="0.05" />
       </linearGradient>
     </defs>
   </svg>
 );
 
-/** Minimal neural mesh — 5-node graph */
-const NeuralMesh = () => (
-  <svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden
-    className="inline-block align-middle shrink-0">
-    {/* Edges */}
-    {[
-      [26, 6,  6, 26], [26, 6, 46, 26],
-      [6, 26,  26, 46], [46, 26, 26, 46],
-      [6, 26, 46, 26],
-    ].map(([x1, y1, x2, y2], i) => (
-      <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-        stroke="#4EA3E0" strokeOpacity="0.25" strokeWidth="0.8" />
-    ))}
-    {/* Nodes */}
-    {[[26, 6], [6, 26], [46, 26], [26, 46]].map(([cx, cy], i) => (
-      <circle key={i} cx={cx} cy={cy} r="2.5"
-        fill={["#4EA3E0","#a855f7","#22d3ee","#4EA3E0"][i]}
-        fillOpacity="0.85" />
-    ))}
-    {/* Core */}
-    <circle cx="26" cy="26" r="5" fill="#4EA3E0" fillOpacity="0.12" />
-    <circle cx="26" cy="26" r="2" fill="#4EA3E0" />
+const SignalBars = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden className="inline-block align-middle shrink-0">
+    <rect x="2" y="16" width="5" height="10" rx="1.5" fill="var(--color-accent)" fillOpacity="0.5" />
+    <rect x="10" y="10" width="5" height="16" rx="1.5" fill="var(--color-accent)" fillOpacity="0.75" />
+    <rect x="18" y="4" width="5" height="22" rx="1.5" fill="var(--color-accent)" />
   </svg>
 );
 
-/** Abstract velocity mark — three tapering lines */
-const VelocityMark = () => (
-  <svg width="48" height="28" viewBox="0 0 48 28" fill="none" aria-hidden
-    className="inline-block align-middle shrink-0">
-    <line x1="0" y1="7"  x2="38" y2="7"  stroke="#4EA3E0" strokeWidth="1.1" strokeLinecap="round" strokeOpacity="0.6" />
-    <line x1="0" y1="14" x2="48" y2="14" stroke="white"   strokeWidth="0.7" strokeLinecap="round" strokeOpacity="0.18" />
-    <line x1="0" y1="21" x2="30" y2="21" stroke="#a855f7" strokeWidth="1.1" strokeLinecap="round" strokeOpacity="0.5" />
+const MessageIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden className="inline-block align-middle shrink-0">
+    <rect x="2" y="5" width="24" height="16" rx="3" stroke="var(--color-accent)" strokeWidth="1.2" strokeOpacity="0.7" />
+    <path d="M8 10 H20 M8 14 H16" stroke="var(--color-accent)" strokeWidth="1.2" strokeLinecap="round" strokeOpacity="0.8" />
+    <path d="M6 21 L10 17 H22 V21" stroke="var(--color-accent)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.4" />
   </svg>
 );
-
-/** 4-point star ornament */
-const StarAccent = () => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden
-    className="inline-block align-middle shrink-0">
-    <path d="M11 1 L12.6 9.4 L21 11 L12.6 12.6 L11 21 L9.4 12.6 L1 11 L9.4 9.4 Z"
-      fill="url(#st-g)" />
-    <defs>
-      <radialGradient id="st-g" cx="50%" cy="50%" r="50%">
-        <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.9" />
-        <stop offset="100%" stopColor="#4EA3E0" stopOpacity="0.2" />
-      </radialGradient>
-    </defs>
-  </svg>
-);
-
-/** Minimal bracket / code symbol */
-const CodeBracket = () => (
-  <svg width="28" height="36" viewBox="0 0 28 36" fill="none" aria-hidden
-    className="inline-block align-middle shrink-0">
-    <path d="M18 2 L8 18 L18 34" stroke="#4EA3E0" strokeWidth="1.5"
-      fill="none" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.6" />
-  </svg>
-);
-
-// ─── Story Definition ────────────────────────────────────────
-// Text phrases and inline SVG glyphs living in one flat array.
-// This is what renders as the continuous sentence.
 
 type Phrase = { k: "phrase"; text: string; weight?: "bold" | "light" | "accent" };
-type Glyph  = { k: "glyph";  el: React.ReactNode; parallaxFactor?: number };
-type Gap    = { k: "gap";    size: number }; // variable horizontal breathing room
+type Glyph  = { k: "glyph"; el: React.ReactNode };
+type Gap    = { k: "gap"; size: number };
 type Story  = Phrase | Glyph | Gap;
 
 const story: Story[] = [
-  { k: "phrase", text: "Building",       weight: "bold"   },
-  { k: "gap",    size: 32                                  },
-  { k: "glyph",  el: <FlowArrow />,      parallaxFactor: 0.6 },
-  { k: "gap",    size: 32                                  },
-  { k: "phrase", text: "scalable",       weight: "light"  },
-  { k: "gap",    size: 12                                  },
-  { k: "phrase", text: "digital",        weight: "bold"   },
-  { k: "gap",    size: 12                                  },
-  { k: "phrase", text: "experiences",    weight: "bold"   },
-  { k: "gap",    size: 56                                  },
-  { k: "glyph",  el: <NodeDot />,        parallaxFactor: 0.4 },
-  { k: "gap",    size: 56                                  },
-  { k: "phrase", text: "powered by",     weight: "light"  },
-  { k: "gap",    size: 16                                  },
-  { k: "glyph",  el: <NeuralMesh />,     parallaxFactor: 0.55 },
-  { k: "gap",    size: 16                                  },
-  { k: "phrase", text: "AI",             weight: "accent" },
-  { k: "gap",    size: 48                                  },
-  { k: "glyph",  el: <VelocityMark />,   parallaxFactor: 0.5 },
-  { k: "gap",    size: 48                                  },
-  { k: "phrase", text: "creativity",     weight: "bold"   },
-  { k: "gap",    size: 16                                  },
-  { k: "glyph",  el: <NodeDot size={6} color="#a855f7" />, parallaxFactor: 0.3 },
-  { k: "gap",    size: 16                                  },
-  { k: "phrase", text: "strategy",       weight: "bold"   },
-  { k: "gap",    size: 56                                  },
-  { k: "glyph",  el: <FlowArrow />,      parallaxFactor: 0.65 },
-  { k: "gap",    size: 56                                  },
-  { k: "phrase", text: "and modern",     weight: "light"  },
-  { k: "gap",    size: 12                                  },
-  { k: "phrase", text: "development",    weight: "bold"   },
-  { k: "gap",    size: 48                                  },
-  { k: "glyph",  el: <CodeBracket />,    parallaxFactor: 0.45 },
-  { k: "gap",    size: 48                                  },
-  { k: "phrase", text: "that helps",     weight: "light"  },
-  { k: "gap",    size: 12                                  },
-  { k: "phrase", text: "businesses",     weight: "bold"   },
-  { k: "gap",    size: 48                                  },
-  { k: "glyph",  el: <StarAccent />,     parallaxFactor: 0.4 },
-  { k: "gap",    size: 48                                  },
-  { k: "phrase", text: "grow faster",    weight: "bold"   },
-  { k: "gap",    size: 32                                  },
-  { k: "glyph",  el: <NodeDot size={8} color="#22d3ee" />, parallaxFactor: 0.35 },
-  { k: "gap",    size: 32                                  },
-  { k: "phrase", text: "together",       weight: "accent" },
-  { k: "gap",    size: 80                                  },
+  { k: "phrase", text: "Connect",       weight: "bold"   },
+  { k: "gap",    size: 28                                 },
+  { k: "glyph",  el: <FlowArrow />                        },
+  { k: "gap",    size: 28                                 },
+  { k: "phrase", text: "every",         weight: "light"  },
+  { k: "gap",    size: 10                                 },
+  { k: "phrase", text: "customer",      weight: "bold"   },
+  { k: "gap",    size: 48                                 },
+  { k: "glyph",  el: <NodeDot />                          },
+  { k: "gap",    size: 48                                 },
+  { k: "phrase", text: "across",        weight: "light"  },
+  { k: "gap",    size: 10                                 },
+  { k: "phrase", text: "SMS",           weight: "accent" },
+  { k: "gap",    size: 12                                 },
+  { k: "phrase", text: "WhatsApp",      weight: "bold"   },
+  { k: "gap",    size: 12                                 },
+  { k: "phrase", text: "Voice",         weight: "bold"   },
+  { k: "gap",    size: 48                                 },
+  { k: "glyph",  el: <SignalBars />                       },
+  { k: "gap",    size: 48                                 },
+  { k: "phrase", text: "and",           weight: "light"  },
+  { k: "gap",    size: 10                                 },
+  { k: "phrase", text: "Email",         weight: "bold"   },
+  { k: "gap",    size: 48                                 },
+  { k: "glyph",  el: <NodeDotAlt />                       },
+  { k: "gap",    size: 48                                 },
+  { k: "glyph",  el: <FlowArrow />                        },
+  { k: "gap",    size: 56                                 },
+  { k: "phrase", text: "automate",      weight: "bold"   },
+  { k: "gap",    size: 12                                 },
+  { k: "phrase", text: "engagement",    weight: "bold"   },
+  { k: "gap",    size: 48                                 },
+  { k: "glyph",  el: <MessageIcon />                      },
+  { k: "gap",    size: 48                                 },
+  { k: "phrase", text: "accelerate",    weight: "light"  },
+  { k: "gap",    size: 10                                 },
+  { k: "phrase", text: "growth",        weight: "bold"   },
+  { k: "gap",    size: 56                                 },
+  { k: "glyph",  el: <NodeDot />                          },
+  { k: "gap",    size: 56                                 },
+  { k: "phrase", text: "at",            weight: "light"  },
+  { k: "gap",    size: 10                                 },
+  { k: "phrase", text: "scale",         weight: "accent" },
+  { k: "gap",    size: 80                                 },
 ];
 
-// ─── Typography helpers ──────────────────────────────────────
-const weightClass: Record<string, string> = {
-  bold:   "font-semibold text-white/90",
-  light:  "font-light text-white/40",
-  accent: "font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#4EA3E0] to-[#a855f7]",
-};
-
-// ─── Component ───────────────────────────────────────────────
 export default function CinematicStoryScroll() {
-  const sectionRef  = useRef<HTMLElement>(null);
-  const trackRef    = useRef<HTMLDivElement>(null);
-  const glyphRefs   = useRef<(HTMLSpanElement | null)[]>([]);
-  const floatTimers = useRef<gsap.core.Tween[]>([]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef   = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-
     const section = sectionRef.current;
     const track   = trackRef.current;
     if (!section || !track) return;
 
     const mm = gsap.matchMedia();
 
-    // Desktop & Tablet (Horizontal Pinning)
     mm.add("(min-width: 768px)", () => {
-      const getDistance = () =>
-        Math.max(0, track.scrollWidth - window.innerWidth + 160); // +160px breathing room
+      const getDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + 160);
 
-      const mainTween = gsap.to(track, {
-        x:    () => -getDistance(),
-        ease: "none",
-      });
+      const mainTween = gsap.to(track, { x: () => -getDistance(), ease: "none" });
 
-      const trigger = ScrollTrigger.create({
-        trigger:            section,
-        start:              "top top",
-        end:                () => `+=${getDistance()}`,
-        pin:                true,
-        anticipatePin:      1,
-        scrub:              1.6, // cinematic scrub
-        animation:          mainTween,
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: () => `+=${getDistance()}`,
+        pin: true,
+        anticipatePin: 1,
+        scrub: 1,
+        animation: mainTween,
         invalidateOnRefresh: true,
-      });
-
-      // Layered parallax on glyphs
-      glyphRefs.current.forEach((el) => {
-        if (!el) return;
-        const factor = el.dataset.parallax ? parseFloat(el.dataset.parallax) : 0.5;
-        gsap.to(el, {
-          x:    () => getDistance() * factor * 0.25, // counter-translate
-          ease: "none",
-          scrollTrigger: {
-            trigger:            section,
-            start:              "top top",
-            end:                () => `+=${getDistance()}`,
-            scrub:              1.6,
-            invalidateOnRefresh: true,
-          },
-        });
       });
     });
 
-    // Mobile (Wrapped Text Scroll-Highlight Reveal)
     mm.add("(max-width: 767px)", () => {
       const elements = track.querySelectorAll(".story-item");
       elements.forEach((el) => {
-        gsap.fromTo(el, 
-          { opacity: 0.2, y: 15 },
+        gsap.fromTo(el,
+          { opacity: 0.2, y: 12 },
           {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              end: "top 60%",
-              scrub: true,
-            }
+            opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+            scrollTrigger: { trigger: el, start: "top 85%", end: "top 60%", scrub: true },
           }
         );
       });
     });
 
-    // Subtle floating micro-animations on glyphs (runs everywhere)
-    glyphRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const t = gsap.to(el, {
-        y:        gsap.utils.random(-5, 5),
-        rotation: gsap.utils.random(-4, 4),
-        duration: gsap.utils.random(2.2, 3.8),
-        ease:     "sine.inOut",
-        repeat:   -1,
-        yoyo:     true,
-        delay:    i * 0.3,
-      });
-      floatTimers.current.push(t);
-    });
-
-    // Fade-in the section gracefully
-    gsap.from(section, {
-      opacity: 0,
-      duration: 1.2,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: section,
-        start:   "top 85%",
-        once:    true,
-      },
-    });
-
     return () => {
       mm.revert();
-      floatTimers.current.forEach((t) => t.kill());
     };
   }, []);
-
-  // Track glyph index separately for refs
-  let glyphIndex = 0;
 
   return (
     <section
       ref={sectionRef}
-      aria-label="Our story"
-      className="relative w-full h-auto py-24 md:py-0 md:h-screen flex items-center justify-center bg-[#030712] border-t border-b border-white/5 overflow-hidden"
+      aria-label="Glocious story"
+      className="relative w-full h-auto py-24 md:py-0 md:h-[100svh] flex items-center justify-center overflow-hidden"
+      style={{
+        background: "var(--color-background)",
+        borderTop: "1px solid var(--color-border)",
+      }}
     >
-      {/* ── Ambient light bloom ── */}
+      {/* Ambient bloom */}
       <div
         aria-hidden
         style={{
-          position:   "absolute",
-          top: "50%", left: "50%",
-          transform:  "translate(-50%, -50%)",
-          width:      "900px",
-          height:     "300px",
-          background: "radial-gradient(ellipse at center, rgba(78,163,224,0.05) 0%, transparent 65%)",
+          position: "absolute", top: "50%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "900px", height: "280px",
+          background: "radial-gradient(ellipse at center, var(--glow-color) 0%, transparent 65%)",
           pointerEvents: "none",
         }}
       />
 
-      {/* ── Edge fade masks ── */}
+      {/* Edge fades */}
       <div
         aria-hidden
-        style={{
-          position: "absolute", inset: 0, zIndex: 10,
-          pointerEvents: "none",
-          background:
-            "linear-gradient(to right, #030712 0%, transparent 6%, transparent 94%, #030712 100%)",
-        }}
         className="hidden md:block"
+        style={{
+          position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none",
+          background: "linear-gradient(to right, var(--color-background) 0%, transparent 6%, transparent 94%, var(--color-background) 100%)",
+        }}
       />
 
-      {/* ── Eyebrow label ── */}
+      {/* Eyebrow — offset below the fixed header so it is never occluded */}
       <p
         aria-hidden
         style={{
-          position: "absolute", top: "24px", left: "50%",
+          position: "absolute", top: "5.5rem", left: "50%",
           transform: "translateX(-50%)", zIndex: 20,
           fontSize: "9px", fontWeight: 600,
-          letterSpacing: "0.3em", textTransform: "uppercase",
-          color: "rgba(255,255,255,0.15)", whiteSpace: "nowrap",
+          letterSpacing: "0.32em", textTransform: "uppercase",
+          color: "var(--color-text-muted)", opacity: 0.8,
+          whiteSpace: "nowrap",
         }}
       >
-        Our story — scroll to explore
+        The Glocious ecosystem — scroll to explore
       </p>
 
-      {/* ── Story track ── */}
+      {/* Track */}
       <div
         ref={trackRef}
-        style={{
-          display: "flex",
-          userSelect: "none",
-        }}
+        style={{ display: "flex", userSelect: "none" }}
         className="relative flex-wrap md:flex-nowrap items-center justify-center md:justify-start h-auto md:h-full max-w-7xl mx-auto px-6 md:pl-[max(6vw,40px)] md:pr-[max(12vw,80px)] gap-x-4 gap-y-6 md:gap-0 whitespace-normal md:whitespace-nowrap will-change-transform"
       >
         {story.map((item, i) => {
-          // Spacer (gap)
           if (item.k === "gap") {
-            return (
-              <div 
-                key={i} 
-                className="hidden md:block shrink-0" 
-                style={{ width: `${item.size}px` }} 
-                aria-hidden 
-              />
-            );
+            return <div key={i} className="hidden md:block shrink-0" style={{ width: `${item.size}px` }} aria-hidden />;
           }
 
-          // Text phrase
           if (item.k === "phrase") {
-            const isBoldWeight  = item.weight === "bold";
-            const isLightWeight = item.weight === "light";
-            const isAccent      = item.weight === "accent";
-
+            const isBold   = item.weight === "bold";
+            const isAccent = item.weight === "accent";
             return (
               <span
                 key={i}
+                className="story-item text-center md:text-left whitespace-nowrap"
                 style={{
-                  display:     "inline-block",
-                  flexShrink:  0,
-                  fontSize:    "clamp(2rem, 5.5vw, 5.25rem)",
-                  fontWeight:  isBoldWeight ? 650 : isAccent ? 700 : 300,
+                  display: "inline-block", flexShrink: 0,
+                  fontSize: "clamp(1.9rem, 5.2vw, 5rem)",
+                  fontWeight: isBold ? 650 : isAccent ? 700 : 300,
                   letterSpacing: "-0.025em",
-                  lineHeight:  1.1,
-                  // Accent gets gradient via inline style (bg-clip doesn't work inline)
+                  lineHeight: 1.1,
+                  fontFamily: "inherit",
                   ...(isAccent
                     ? {
-                        background: "linear-gradient(90deg, #4EA3E0, #a855f7)",
+                        background: "linear-gradient(90deg, var(--color-accent), var(--color-accent-alt))",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                         backgroundClip: "text",
                       }
                     : {
-                        color: isBoldWeight
-                          ? "rgba(255,255,255,0.88)"
-                          : "rgba(255,255,255,0.32)",
+                        color: isBold
+                          ? "var(--color-text-primary)"
+                          : "var(--color-text-secondary)",
+                        opacity: isBold ? 0.88 : 1,
+                        textShadow: isBold ? "0 0 60px var(--glow-color)" : "none",
                       }),
-                  fontFamily: "inherit",
-                  textShadow: isBoldWeight
-                    ? "0 0 80px rgba(78,163,224,0.08)"
-                    : "none",
                 }}
-                className="story-item text-center md:text-left whitespace-nowrap"
               >
                 {item.text}
               </span>
             );
           }
 
-          // Glyph (inline SVG)
           if (item.k === "glyph") {
-            const refIdx = glyphIndex++;
             return (
               <span
                 key={i}
-                ref={(el) => { glyphRefs.current[refIdx] = el; }}
-                data-parallax={(item as Glyph).parallaxFactor ?? 0.5}
-                style={{
-                  display:     "inline-flex",
-                  alignItems:  "center",
-                  flexShrink:  0,
-                  willChange:  "transform",
-                }}
                 className="story-item"
+                style={{ display: "inline-flex", alignItems: "center", flexShrink: 0 }}
                 aria-hidden
               >
-                {(item as Glyph).el}
+                {item.el}
               </span>
             );
           }
@@ -436,23 +271,21 @@ export default function CinematicStoryScroll() {
         })}
       </div>
 
-      {/* ── Bottom scroll hint ── */}
+      {/* Scroll hint */}
       <p
         aria-hidden
+        className="hidden md:flex"
         style={{
           position: "absolute", bottom: "24px", left: "50%",
           transform: "translateX(-50%)", zIndex: 20,
           display: "flex", alignItems: "center", gap: "8px",
           fontSize: "9px", fontWeight: 600,
-          letterSpacing: "0.3em", textTransform: "uppercase",
-          color: "rgba(255,255,255,0.12)", whiteSpace: "nowrap",
+          letterSpacing: "0.32em", textTransform: "uppercase",
+          color: "var(--color-text-muted)", opacity: 0.6, whiteSpace: "nowrap",
         }}
-        className="hidden md:flex"
       >
-        {/* Minimal chevron right */}
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M2 2 L10 6 L2 10" stroke="currentColor" strokeWidth="1.2"
-            strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M2 2 L10 6 L2 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         Keep scrolling
       </p>
