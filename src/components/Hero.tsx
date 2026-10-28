@@ -61,7 +61,7 @@ const RING_RADIUS = 34;
 
 function HeroVisual() {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[340px] sm:max-w-[460px] flex items-center justify-center">
+    <div className="relative mx-auto aspect-square w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[460px] flex items-center justify-center">
       {/* Background concentric rings — static, providing structure */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div 
@@ -223,15 +223,15 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <div className="container-page relative z-10 pt-[140px] pb-20 flex flex-col lg:flex-row items-center justify-between gap-16">
+      <div className="container-page relative z-10 pt-28 sm:pt-32 lg:pt-[140px] pb-16 sm:pb-20 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
         {/* Left: Text */}
-        <div className="flex-1 max-w-[600px]">
+        <div className="flex-1 min-w-0 max-w-[600px] w-full text-center lg:text-left">
           {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
-            className="badge badge-accent mb-8"
+            className="badge badge-accent mb-8 mx-auto lg:mx-0 w-fit"
           >
             <span className="status-dot" aria-hidden />
             Business Communication &amp; Digital Growth
@@ -256,7 +256,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="text-lead text-content-secondary mb-10 max-w-[520px]"
+            className="text-lead text-content-secondary mb-10 max-w-[520px] mx-auto lg:mx-0"
           >
             Glocious helps businesses communicate with customers, automate engagement and accelerate growth through intelligent communication, digital and technology solutions.
           </motion.p>
@@ -266,7 +266,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+            className="flex flex-col sm:flex-row items-center lg:items-start sm:justify-center lg:justify-start gap-4"
           >
             <MagneticButton>
               <Link href="/contact" className="btn btn-primary btn-lg">
@@ -282,12 +282,13 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Right: Visual */}
+        {/* Right: Visual — hidden on xs to prevent ring overflow; height-capped
+             between sm–lg so it doesn't dominate the single-column stacked layout */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
-          className="flex-1 flex items-center justify-center w-full max-w-[500px]"
+          className="hidden sm:flex flex-1 items-center justify-center w-full max-w-[440px] lg:max-w-[500px] max-h-[380px] sm:max-h-[420px] lg:max-h-none"
         >
           <HeroVisual />
         </motion.div>

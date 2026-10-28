@@ -439,24 +439,14 @@ export default function Navbar() {
         {/* ── Mobile menu button ───────────────────────────── */}
         <button
           type="button"
-          className="icon-btn lg:hidden z-[110] relative text-content-primary"
-          style={{ width: "2.25rem", height: "2.25rem" }}
+          className={`icon-btn lg:hidden relative text-content-primary ${mobileMenuOpen ? "invisible" : ""}`}
+          style={{ width: "2.25rem", height: "2.25rem", zIndex: 110 }}
           onClick={() => setMobileMenuOpen((v) => !v)}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-label="Open menu"
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-menu"
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {mobileMenuOpen ? (
-              <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                <X size={22} />
-              </motion.span>
-            ) : (
-              <motion.span key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                <Menu size={22} />
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <Menu size={22} />
         </button>
       </div>
 

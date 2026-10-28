@@ -66,7 +66,7 @@ export default function CommunicationEcosystem() {
       <div className="container-page relative z-10">
         {/* Header — copy on the left, ecosystem visual on the right. The
             image carries the "one connected system" idea the heading states. */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center mb-10 lg:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -92,7 +92,7 @@ export default function CommunicationEcosystem() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, delay: 0.1 }}
-            className="group lg:col-span-6 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card"
+            className="group lg:col-span-6 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card max-h-[280px] sm:max-h-[340px] lg:max-h-none"
           >
             <Image
               src="/images/communication-ecosystem.jpg"

@@ -92,9 +92,9 @@
   /* Typography scale (fluid). Body sits at a true 16px — the readable
      baseline enterprise sites standardise on — so no copy inherits a
      sub-16px default. */
-  --text-display: clamp(2.75rem, 1.8rem + 5vw, 4.5rem);
-  --text-h1:      clamp(2.25rem, 1.6rem + 4vw, 3.875rem);
-  --text-h2:      clamp(1.875rem, 1.45rem + 2.2vw, 2.875rem);
+  --text-display: clamp(2.25rem, 1.6rem + 4.5vw, 4.5rem);
+  --text-h1:      clamp(1.875rem, 1.4rem + 3.5vw, 3.875rem);
+  --text-h2:      clamp(1.625rem, 1.3rem + 2vw, 2.875rem);
   --text-h3:      clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);
   --text-h4:      clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
   --text-lead:    clamp(1rem, 0.96rem + 0.25vw, 1.125rem);

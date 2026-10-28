@@ -46,13 +46,13 @@ export default function TechSolutions() {
       <div className="container-page relative z-10">
         {/* Header — visual leads on the left, mirrored against the
             communication section above so the two do not read as one block. */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center mb-10 lg:mb-16">
           <motion.figure
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65 }}
-            className="group order-2 lg:order-1 lg:col-span-5 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card"
+            className="group order-2 lg:order-1 lg:col-span-5 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card max-h-[260px] sm:max-h-[320px] lg:max-h-none"
           >
             <Image
               src="/images/technology-infrastructure.jpg"

@@ -82,7 +82,7 @@ export default function DigitalGrowth() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="lg:sticky lg:top-28"
+              className="lg:sticky lg:top-20"
             >
               <p className="eyebrow mb-4">Digital Growth</p>
               <h2 className="text-h2 text-content-primary mb-6">
