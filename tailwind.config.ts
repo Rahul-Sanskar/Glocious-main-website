@@ -85,6 +85,12 @@ const config: Config = {
         },
       },
 
+      /* Ring defaults to the brand focus token instead of Tailwind's stock
+         blue, so a bare `ring` utility can never reintroduce blue. */
+      ringColor: {
+        DEFAULT: "var(--color-focus-ring)",
+      },
+
       fontFamily: {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
         display: ["var(--font-sora)", "var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],

@@ -17,22 +17,22 @@ const categories = [
 ];
 
 const toolsList = [
-  { id: 1, name: "ChatGPT", desc: "OpenAI's flagship conversational model for writing and analysis.", category: "AI Writing", tag: "Freemium", url: "https://chat.openai.com", logoText: "OAI", color: "from-emerald-500/20 to-green-900/40" },
+  { id: 1, name: "ChatGPT", desc: "OpenAI's flagship conversational model for writing and analysis.", category: "AI Writing", tag: "Freemium", url: "https://chat.openai.com", logoText: "OAI", color: "from-amber-500/20 to-yellow-900/40" },
   { id: 2, name: "Claude", desc: "Anthropic's helpful, harmless, and honest AI assistant.", category: "AI Writing", tag: "Freemium", url: "https://claude.ai", logoText: "CL", color: "from-amber-500/20 to-orange-900/40" },
-  { id: 3, name: "Gemini", desc: "Google's multimodal AI designed for complex reasoning.", category: "AI Writing", tag: "Freemium", url: "https://gemini.google.com", logoText: "GM", color: "from-blue-500/20 to-indigo-900/40" },
-  { id: 4, name: "Canva", desc: "The ultimate drag-and-drop design tool for social media and marketing.", category: "Design", tag: "Freemium", url: "https://canva.com", logoText: "CV", color: "from-cyan-500/20 to-blue-900/40" },
+  { id: 3, name: "Gemini", desc: "Google's multimodal AI designed for complex reasoning.", category: "AI Writing", tag: "Freemium", url: "https://gemini.google.com", logoText: "GM", color: "from-red-500/20 to-red-900/40" },
+  { id: 4, name: "Canva", desc: "The ultimate drag-and-drop design tool for social media and marketing.", category: "Design", tag: "Freemium", url: "https://canva.com", logoText: "CV", color: "from-yellow-400/20 to-amber-900/40" },
   { id: 5, name: "Figma", desc: "Collaborative interface design tool for high-end UI/UX.", category: "Design", tag: "Freemium", url: "https://figma.com", logoText: "FG", color: "from-rose-500/20 to-red-900/40" },
   { id: 6, name: "Remove.bg", desc: "Instantly remove image backgrounds using AI.", category: "Design", tag: "Free", url: "https://remove.bg", logoText: "RB", color: "from-zinc-500/20 to-slate-900/40" },
   { id: 7, name: "Notion", desc: "The connected workspace for your docs, projects, and knowledge.", category: "Productivity", tag: "Freemium", url: "https://notion.so", logoText: "NT", color: "from-gray-500/20 to-zinc-900/40" },
-  { id: 8, name: "Trello", desc: "Visual boards to manage projects and organize workflows.", category: "Productivity", tag: "Freemium", url: "https://trello.com", logoText: "TR", color: "from-blue-400/20 to-blue-800/40" },
-  { id: 9, name: "ClickUp", desc: "One app to replace them all. Tasks, docs, chat, and goals.", category: "Productivity", tag: "Freemium", url: "https://clickup.com", logoText: "CU", color: "from-purple-500/20 to-pink-900/40" },
+  { id: 8, name: "Trello", desc: "Visual boards to manage projects and organize workflows.", category: "Productivity", tag: "Freemium", url: "https://trello.com", logoText: "TR", color: "from-red-400/20 to-red-900/40" },
+  { id: 9, name: "ClickUp", desc: "One app to replace them all. Tasks, docs, chat, and goals.", category: "Productivity", tag: "Freemium", url: "https://clickup.com", logoText: "CU", color: "from-red-500/20 to-amber-900/40" },
   { id: 10, name: "CapCut", desc: "Free all-in-one video editing app with AI features.", category: "Video", tag: "Free", url: "https://capcut.com", logoText: "CC", color: "from-slate-800/20 to-black/40" },
-  { id: 11, name: "Descript", desc: "Write, record, transcribe, edit, collaborate, and share videos.", category: "Video", tag: "Freemium", url: "https://descript.com", logoText: "DS", color: "from-indigo-500/20 to-purple-900/40" },
+  { id: 11, name: "Descript", desc: "Write, record, transcribe, edit, collaborate, and share videos.", category: "Video", tag: "Freemium", url: "https://descript.com", logoText: "DS", color: "from-red-500/20 to-yellow-900/40" },
   { id: 12, name: "Ubersuggest", desc: "Generate more SEO traffic with premium keyword research.", category: "SEO / Marketing", tag: "Freemium", url: "https://neilpatel.com/ubersuggest/", logoText: "UB", color: "from-orange-500/20 to-red-900/40" },
-  { id: 13, name: "Ahrefs Free Tools", desc: "Free SEO tools from the industry leader in backlink analysis.", category: "SEO / Marketing", tag: "Free", url: "https://ahrefs.com/free-seo-tools", logoText: "AH", color: "from-blue-600/20 to-indigo-900/40" },
+  { id: 13, name: "Ahrefs Free Tools", desc: "Free SEO tools from the industry leader in backlink analysis.", category: "SEO / Marketing", tag: "Free", url: "https://ahrefs.com/free-seo-tools", logoText: "AH", color: "from-red-600/20 to-red-900/40" },
   { id: 14, name: "AnswerThePublic", desc: "Discover what people are asking about on Google.", category: "SEO / Marketing", tag: "Freemium", url: "https://answerthepublic.com", logoText: "AP", color: "from-yellow-500/20 to-orange-900/40" },
   { id: 15, name: "Zapier", desc: "Connect your apps and automate workflows without coding.", category: "Automation", tag: "Freemium", url: "https://zapier.com", logoText: "ZP", color: "from-orange-400/20 to-amber-900/40" },
-  { id: 16, name: "Make", desc: "Advanced visual workflow automation platform.", category: "Automation", tag: "Freemium", url: "https://make.com", logoText: "MK", color: "from-violet-500/20 to-purple-900/40" },
+  { id: 16, name: "Make", desc: "Advanced visual workflow automation platform.", category: "Automation", tag: "Freemium", url: "https://make.com", logoText: "MK", color: "from-red-500/20 to-yellow-900/40" },
   { id: 17, name: "n8n", desc: "Fair-code workflow automation tool. Self-hostable.", category: "Automation", tag: "Free / OSS", url: "https://n8n.io", logoText: "N8", color: "from-red-500/20 to-rose-900/40" }
 ];
 

@@ -106,14 +106,14 @@ export default function DigitalGrowth() {
 
               {/* Visual anchor for the sticky column — the growing list on the
                   right has no imagery, so the section keeps one here. */}
-              <div className="relative mt-10 hidden overflow-hidden rounded-xl border border-border bg-surface shadow-card lg:block">
+              <div className="relative mt-10 hidden overflow-hidden rounded-xl border border-border bg-surface shadow-card group lg:block">
                 <Image
                   src="/images/digital-growth.jpg"
                   alt="Abstract visual representing digital growth and campaign performance"
                   width={1376}
                   height={768}
                   sizes="(min-width: 1024px) 460px, 100vw"
-                  className="h-auto w-full object-cover"
+                  className="h-auto w-full object-cover transition-transform duration-slow ease-out-soft group-hover:scale-[1.04]"
                 />
               </div>
             </motion.div>
@@ -140,12 +140,12 @@ export default function DigitalGrowth() {
                       style={{ background: "var(--color-accent)" }}
                     />
 
-                    <div className="flex items-start gap-5 sm:gap-8 py-6">
+                    <div className="flex items-start gap-5 sm:gap-8 py-6 transition-transform duration-base ease-out-soft group-hover:translate-x-1.5">
                       <span className="font-mono text-2xs tabular-nums pt-1.5 text-content-muted transition-colors group-hover:text-accent">
                         {String(i + 1).padStart(2, "0")}
                       </span>
 
-                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 border transition-colors bg-accent-soft border-accent-soft group-hover:bg-accent">
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 border transition-all duration-base bg-accent-soft border-accent-soft group-hover:bg-accent group-hover:scale-110">
                         <Icon
                           size={16}
                           className="text-accent transition-colors group-hover:text-accent-contrast"

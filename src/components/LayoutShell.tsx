@@ -17,6 +17,7 @@ import type { ReactNode } from "react";
 import { MotionConfig } from "framer-motion";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import InteractiveBackground from "@/components/InteractiveBackground";
+import PageLoader from "@/components/PageLoader";
 
 const AIChatbot    = dynamic(() => import("@/components/AIChatbot"),    { ssr: false });
 const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"), { ssr: false });
@@ -29,6 +30,9 @@ export default function LayoutShell({ children }: { children: ReactNode }) {
           fades are kept. Declared once here instead of guarding each component,
           so a stale `initial={{ y: 24 }}` anywhere can never bypass it. */}
       <MotionConfig reducedMotion="user">
+        {/* Server-rendered so it covers the very first paint, then removes
+            itself once the document has loaded. See PageLoader.tsx. */}
+        <PageLoader />
         <InteractiveBackground />
         <SmoothScroll />
         {children}

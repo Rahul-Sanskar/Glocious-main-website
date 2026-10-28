@@ -189,6 +189,11 @@ export default function RootLayout({
             __html: `(function(){try{var s=localStorage.getItem("theme");var t=s==="light"||s==="dark"?s:(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");var e=document.documentElement;e.setAttribute("data-theme",t);e.style.colorScheme=t;}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();`,
           }}
         />
+        {/* The first-paint loader is removed by JavaScript. Without it, the
+            overlay would stay on screen forever — so hide it outright. */}
+        <noscript>
+          <style>{`[data-page-loader]{display:none!important}`}</style>
+        </noscript>
       </head>
       <body
         className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import MagneticButton from "./MagneticButton";
+import BrandLogo from "./BrandLogo";
 import { useTheme } from "./ThemeProvider";
 
 // ─── Nav structure ────────────────────────────────────────────
@@ -304,19 +305,7 @@ export default function Navbar() {
 
         {/* ── Logo ─────────────────────────────────────────── */}
         <div className="flex items-center gap-8 xl:gap-10">
-          <Link
-            href="/"
-            className="flex items-center gap-2 font-display font-bold text-[16px] tracking-tight shrink-0 z-50 rounded text-content-primary"
-            aria-label="Glocious — home"
-          >
-            <div
-              className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[11px] font-black bg-accent text-accent-contrast"
-              aria-hidden
-            >
-              G
-            </div>
-            <span>Glocious</span>
-          </Link>
+          <BrandLogo preload size={32} className="shrink-0 z-50" />
 
           {/* ── Desktop navigation ──────────────────────────── */}
           <nav
@@ -413,12 +402,38 @@ export default function Navbar() {
             {ThemeIcon}
           </button>
 
-          {/* CTA */}
-          <MagneticButton>
-            <Link href="/contact" className="btn btn-primary">
-              Talk to Us
+          {/* CTA — color-shifting premium button */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="relative"
+          >
+            <Link 
+              href="/contact" 
+              className="btn btn-primary relative overflow-hidden group border-none"
+              style={{
+                background: "linear-gradient(135deg, var(--color-button-background) 0%, var(--brand-yellow-500) 50%, var(--color-button-background) 100%)",
+                backgroundSize: "200% 100%",
+              }}
+            >
+              <motion.div
+                className="absolute inset-0"
+                animate={{
+                  backgroundPosition: ["0% 0%", "200% 0%"],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+                style={{
+                  background: "linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)",
+                  backgroundSize: "200% 100%",
+                }}
+              />
+              <span className="relative z-10">Talk to Us</span>
             </Link>
-          </MagneticButton>
+          </motion.div>
         </div>
 
         {/* ── Mobile menu button ───────────────────────────── */}
@@ -464,16 +479,7 @@ export default function Navbar() {
           >
             {/* Mobile header */}
             <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b border-border">
-              <Link
-                href="/"
-                className="flex items-center gap-2 font-display font-bold text-[16px] tracking-tight text-content-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <div className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[11px] font-black bg-accent text-accent-contrast">
-                  G
-                </div>
-                Glocious
-              </Link>
+              <BrandLogo size={30} onClick={() => setMobileMenuOpen(false)} />
               <button
                 type="button"
                 className="icon-btn text-content-primary"

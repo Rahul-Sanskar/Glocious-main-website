@@ -92,7 +92,7 @@ export default function CommunicationEcosystem() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, delay: 0.1 }}
-            className="lg:col-span-6 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card"
+            className="group lg:col-span-6 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card"
           >
             <Image
               src="/images/communication-ecosystem.jpg"
@@ -100,7 +100,7 @@ export default function CommunicationEcosystem() {
               width={1376}
               height={768}
               sizes="(min-width: 1024px) 620px, 100vw"
-              className="h-auto w-full object-cover"
+              className="h-auto w-full object-cover transition-transform duration-slow ease-out-soft group-hover:scale-[1.04]"
             />
           </motion.figure>
         </div>
@@ -114,7 +114,8 @@ export default function CommunicationEcosystem() {
                 key={gi}
                 initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                whileHover={{ y: -4, transition: { duration: 0.18, ease: "easeOut" } }}
+                viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.55, delay: gi * 0.1 }}
                 className="card group p-6 relative overflow-hidden transition-colors duration-base hover:border-border-strong"
               >
@@ -134,8 +135,17 @@ export default function CommunicationEcosystem() {
                 {/* Channel list */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {group.channels.map((ch, ci) => (
-                    <div
+                    <motion.div
                       key={ci}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      whileHover={{ x: 4, transition: { duration: 0.15, ease: "easeOut" } }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 0.35,
+                        delay: gi * 0.1 + 0.12 + ci * 0.04,
+                        ease: "easeOut",
+                      }}
                       className="surface-tint flex items-start gap-2.5 p-3 rounded-lg transition-colors duration-200 hover:bg-accent-soft"
                     >
                       <span
@@ -150,7 +160,7 @@ export default function CommunicationEcosystem() {
                           {ch.desc}
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>

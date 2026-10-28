@@ -16,7 +16,7 @@ const blogPosts = [
     source: "OpenAI",
     category: "AI Agents",
     url: "https://openai.com/blog",
-    gradient: "from-green-500/20 to-emerald-900/40"
+    gradient: "from-amber-500/20 to-yellow-900/40"
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const blogPosts = [
     source: "Google AI",
     category: "AI Agents",
     url: "https://blog.google/technology/ai",
-    gradient: "from-blue-500/20 to-indigo-900/40"
+    gradient: "from-red-500/20 to-red-900/40"
   },
   {
     id: 3,
@@ -61,7 +61,7 @@ const blogPosts = [
     source: "Shopify",
     category: "Business Growth",
     url: "https://www.shopify.com/blog",
-    gradient: "from-green-400/20 to-teal-900/40"
+    gradient: "from-yellow-400/20 to-amber-900/40"
   },
   {
     id: 7,
@@ -70,7 +70,7 @@ const blogPosts = [
     source: "Ahrefs",
     category: "SEO & Marketing",
     url: "https://ahrefs.com/blog",
-    gradient: "from-blue-600/20 to-purple-900/40"
+    gradient: "from-red-600/20 to-amber-900/40"
   },
   {
     id: 8,
@@ -79,7 +79,7 @@ const blogPosts = [
     source: "TechCrunch",
     category: "AI Agents",
     url: "https://techcrunch.com/category/artificial-intelligence/",
-    gradient: "from-green-500/20 to-emerald-900/40"
+    gradient: "from-amber-500/20 to-yellow-900/40"
   },
   {
     id: 9,
@@ -97,7 +97,7 @@ const blogPosts = [
     source: "FutureTools",
     category: "AI Agents",
     url: "https://www.futuretools.io/news",
-    gradient: "from-purple-500/20 to-indigo-900/40"
+    gradient: "from-red-500/20 to-yellow-900/40"
   }
 ];
 

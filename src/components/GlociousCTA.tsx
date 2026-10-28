@@ -7,16 +7,21 @@ import MagneticButton from "./MagneticButton";
 export default function GlociousCTA() {
   return (
     <section className="section relative overflow-hidden border-t border-border">
-      {/* Aurora wash — static. The closing block already carries the page's
-          strongest type; a pulsing background only competes with it. */}
+      {/* Aurora wash — now breathing rather than static. Two out-of-phase
+          layers on long, slow cycles so the closing block feels alive without
+          anything moving fast enough to compete with the headline. */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full blur-[120px] opacity-40"
-          style={{ background: "var(--glow-color)" }}
+        <motion.div
+          className="absolute left-1/2 top-1/2 w-[700px] h-[400px] rounded-full blur-[120px]"
+          style={{ background: "var(--glow-color)", x: "-50%", y: "-50%" }}
+          animate={{ opacity: [0.32, 0.5, 0.32], scale: [1, 1.08, 1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div
-          className="absolute -top-[10%] right-[8%] w-[400px] h-[400px] rounded-full blur-[130px] opacity-20"
+        <motion.div
+          className="absolute -top-[10%] right-[8%] w-[400px] h-[400px] rounded-full blur-[130px]"
           style={{ background: "var(--glow-color-alt)" }}
+          animate={{ opacity: [0.16, 0.3, 0.16], scale: [1, 1.12, 1] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
         />
       </div>
 
@@ -51,9 +56,17 @@ export default function GlociousCTA() {
             Whether you need reliable communication infrastructure, a digital growth engine, or automation across your customer journey — Glocious has the technology and expertise to make it happen.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* Soft halo breathing behind the single primary action */}
+            <motion.span
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[72px] w-[280px] rounded-full blur-2xl"
+              style={{ background: "var(--glow-color)", x: "-50%", y: "-50%" }}
+              animate={{ opacity: [0.5, 0.95, 0.5], scale: [0.96, 1.05, 0.96] }}
+              transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+            />
             <MagneticButton>
-              <Link href="/contact" className="btn btn-primary btn-lg">
+              <Link href="/contact" className="btn btn-primary btn-lg relative z-10">
                 Talk to Us
               </Link>
             </MagneticButton>

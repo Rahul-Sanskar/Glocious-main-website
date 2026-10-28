@@ -2,6 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import BrandLogo from "./BrandLogo";
 
 // Destinations mirror the single-page architecture: capability links jump to
 // the homepage section that documents them, and Contact is the only standalone
@@ -33,15 +34,12 @@ export default function Footer() {
 
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <Link
-              href="/"
-              className="flex items-center gap-2.5 font-display font-bold text-[17px] tracking-tight mb-5 text-content-primary"
-            >
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-black bg-accent text-accent-contrast">
-                G
-              </div>
-              Glocious Infotech
-            </Link>
+            <BrandLogo
+              size={34}
+              wordmark="Glocious Infotech"
+              wordmarkClassName="text-[17px]"
+              className="mb-5"
+            />
             <p className="text-sm leading-relaxed max-w-[280px] text-content-secondary">
               Powering business communication, driving digital growth, and delivering technology solutions for modern enterprises.
             </p>

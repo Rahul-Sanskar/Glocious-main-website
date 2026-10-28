@@ -52,7 +52,7 @@ export default function TechSolutions() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65 }}
-            className="order-2 lg:order-1 lg:col-span-5 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card"
+            className="group order-2 lg:order-1 lg:col-span-5 relative overflow-hidden rounded-xl border border-border bg-surface shadow-card"
           >
             <Image
               src="/images/technology-infrastructure.jpg"
@@ -60,7 +60,7 @@ export default function TechSolutions() {
               width={1376}
               height={768}
               sizes="(min-width: 1024px) 520px, 100vw"
-              className="h-auto w-full object-cover"
+              className="h-auto w-full object-cover transition-transform duration-slow ease-out-soft group-hover:scale-[1.04]"
             />
           </motion.figure>
 
@@ -108,12 +108,13 @@ export default function TechSolutions() {
                 key={sol.title}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -4, transition: { duration: 0.18, ease: "easeOut" } }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="card group flex items-start gap-5 p-6"
               >
                 {/* Icon */}
-                <div className="w-11 h-11 rounded-md flex items-center justify-center shrink-0 border transition-colors duration-base bg-accent-soft border-accent-soft group-hover:bg-accent">
+                <div className="w-11 h-11 rounded-md flex items-center justify-center shrink-0 border transition-all duration-base bg-accent-soft border-accent-soft group-hover:bg-accent group-hover:scale-110">
                   <Icon
                     size={18}
                     className="text-accent transition-colors duration-base group-hover:text-accent-contrast"

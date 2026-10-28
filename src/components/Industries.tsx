@@ -89,14 +89,14 @@ export default function Industries() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.65 }}
-          className="relative mb-16 overflow-hidden rounded-xl border border-border bg-surface shadow-card h-[180px] sm:h-[240px] lg:h-[300px]"
+          className="group relative mb-16 overflow-hidden rounded-xl border border-border bg-surface shadow-card h-[180px] sm:h-[240px] lg:h-[300px]"
         >
           <Image
             src="/images/industries.jpg"
             alt="Abstract visual representing the industries Glocious serves"
             fill
             sizes="(min-width: 1280px) 1280px, 100vw"
-            className="object-cover"
+            className="object-cover transition-transform duration-slow ease-out-soft group-hover:scale-[1.04]"
           />
         </motion.figure>
 
@@ -109,11 +109,12 @@ export default function Industries() {
                 key={i}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -4, transition: { duration: 0.18, ease: "easeOut" } }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.06 }}
                 className="card card-interactive group flex items-start gap-4 p-5"
               >
-                <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 bg-accent-soft border border-accent-soft transition-colors duration-base group-hover:bg-accent">
+                <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 bg-accent-soft border border-accent-soft transition-all duration-base group-hover:bg-accent group-hover:scale-110">
                   <Icon size={17} className="text-accent transition-colors duration-base group-hover:text-accent-contrast" />
                 </div>
                 <div>

@@ -56,16 +56,25 @@ export default function WhyGlocious() {
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -5, transition: { duration: 0.18, ease: "easeOut" } }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
                 className="card card-interactive group relative p-5 flex flex-col items-center justify-center text-center min-h-[130px]"
               >
-                {/* Connecting dot */}
-                <div
-                  className="absolute top-1/2 -translate-y-1/2 -left-[5px] w-2.5 h-2.5 rounded-full hidden xl:block transition-transform duration-base group-hover:scale-125"
+                {/* Connecting dot — pulsing, staggered, so the row reads as one
+                    live system rather than six isolated boxes. */}
+                <motion.div
+                  className="absolute top-[calc(50%-5px)] -left-[5px] w-2.5 h-2.5 rounded-full hidden xl:block"
                   style={{
                     background: "var(--color-accent)",
                     boxShadow: "var(--shadow-accent)",
+                  }}
+                  animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                  transition={{
+                    duration: 2.6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: i * 0.25,
                   }}
                 />
 
