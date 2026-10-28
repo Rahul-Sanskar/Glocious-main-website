@@ -226,16 +226,6 @@ export default function Hero() {
       <div className="container-page relative z-10 pt-28 sm:pt-32 lg:pt-[140px] pb-16 sm:pb-20 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
         {/* Left: Text */}
         <div className="flex-1 min-w-0 max-w-[600px] w-full text-center lg:text-left">
-          {/* Eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: "easeOut" }}
-            className="badge badge-accent mb-8 mx-auto lg:mx-0 w-fit"
-          >
-            <span className="status-dot" aria-hidden />
-            Business Communication &amp; Digital Growth
-          </motion.div>
 
           {/* Headline */}
           <motion.h1
