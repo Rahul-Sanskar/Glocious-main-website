@@ -10,9 +10,7 @@ import { useTheme } from "./ThemeProvider";
 
 // ─── Nav structure ────────────────────────────────────────────
 // "Solutions" uses a two-column mega-panel because it has many items.
-// "PingDoot" is a single product, so it renders as a direct link (a
-// one-item dropdown would only add a click). All other dropdowns use a
-// single-column panel.
+// All other dropdowns use a single-column panel.
 //
 // NOTE ON DESTINATIONS
 // Solutions and the two mapped disciplines now have dedicated pages under
@@ -71,11 +69,6 @@ const navItems: NavItem[] = [
       { title: "E-commerce",          href: "/#technology", icon: ShoppingCart },
       { title: "Digital Solutions",   href: "/solutions/website-digital-solutions", icon: Cpu },
     ],
-  },
-  {
-    // Single product — no dropdown. A one-item menu would just add a click.
-    title: "PingDoot",
-    href: "/#technology",
   },
   {
     title: "Industries",
@@ -346,7 +339,7 @@ export default function Navbar() {
                   onMouseEnter={() => hasDropdown && handleMouseEnter(index)}
                 >
                   {/* Nav trigger — dropdown button, or plain link when the
-                      item has no sub-navigation (e.g. PingDoot) */}
+                      item has no sub-navigation */}
                   {hasDropdown ? (
                     <button
                       type="button"
